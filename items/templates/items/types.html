@@ -1,0 +1,22 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Vendor</th>
+      <th scope="col">Type</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for item_type in item_types %}
+    <tr>
+      <td>{{item_type.vendor}}</td>
+      <td>{{item_type.type}}</td>
+      <td>{{item_type.description}}</td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+{% endblock %}
