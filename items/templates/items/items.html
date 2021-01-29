@@ -1,0 +1,32 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Item</th>
+      <th scope="col">Vendor</th>
+      <th scope="col">Type</th>
+      <th scope="col">Serial</th>
+      <th scope="col">Size</th>
+      <th scope="col">Commissioning</th>
+      <th scope="col">Commentaire</th>
+      <th scope="col">Attribution</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for item in items %}
+    <tr>
+      <td><a href="items/{{item.id}}">{{item.item}}</a></td>
+      <td>{{item.item_type.vendor}}</td>
+      <td>{{item.item_type.type}}</td>
+      <td>{{item.serial}}</td>
+      <td>{{item.size}}</td>
+      <td>{{item.commissioning_date}}</td>
+      <td>{{item.comment}}</td>
+      <td>{{item.member.first_name}} {{item.member.last_name}}</td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+{% endblock %}
