@@ -1,0 +1,31 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+<div class="card" style="width: 18rem;">
+  <div class="card-header">
+    <strong>Item</strong>
+  </div>
+  <table class="table table-hover">
+    <tr>
+      <td>Name</td>
+      <td>{{item.item}}</td>
+    </tr>
+    <tr>
+      <td>Serial</td>
+      <td>{{item.serial}}</td>
+    </tr>
+    <tr>
+      <td>Size</td>
+      <td>{{item.size}}</td>
+    </tr>
+    <tr>
+      <td>Commissioning</td>
+      <td>{{item.commissioning_date}}</td>
+    </tr>
+    <tr>
+      <td>Comment</td>
+      <td>{{item.comment}}</td>
+    </tr>
+  </table>
+</div>
+{% endblock %}

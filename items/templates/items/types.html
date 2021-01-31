@@ -13,7 +13,7 @@
 {% for item_type in item_types %}
     <tr>
       <td>{{item_type.vendor}}</td>
-      <td>{{item_type.type}}</td>
+      <td><a href="types/{{item_type.id}}">{{item_type.type}}</a></td>
       <td>{{item_type.description}}</td>
     </tr>
 {% endfor %}
