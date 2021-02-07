@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .models import ItemType, Item
+from .forms import TypeForm
 
 # Create your views here.
 def types_listing(request):
@@ -20,6 +21,26 @@ def type_detail(request, type_id):
     }
 
     return render(request, 'items/type.html', context)
+
+def type_add(request):
+    if request.method == 'POST':
+        form = TypeForm(request.POST)
+
+        if form.is_valid():
+            type = ItemType()
+
+            type.vendor = form.cleaned_data['vendor']
+            type.type = form.cleaned_data['type']
+            type.description = form.cleaned_data['description']
+
+            type.save()
+
+            return redirect(f'types/{type.id}')
+
+    else:
+        form = TypeForm()
+
+    return render(request, 'items/type-add.html', {'form': form})
 
 def items_listing(request):
     items = Item.objects.all().select_related('item_type').select_related('member')
