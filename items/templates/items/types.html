@@ -15,6 +15,11 @@
       <td>{{item_type.vendor}}</td>
       <td><a href="types/{{item_type.id}}">{{item_type.type}}</a></td>
       <td>{{item_type.description}}</td>
+      <td>
+        <a class="btn btn-danger" href="types/{{item_type.id}}/delete">
+          <span class="bi-trash"></span>
+        </a>
+      </td>
     </tr>
 {% endfor %}
   </tbody>
