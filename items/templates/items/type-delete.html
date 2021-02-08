@@ -1,6 +1,12 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
 <form action="delete" method="post">
     {% csrf_token %}
-    {{ form }}
     Are you sure?
-    <input type="submit" value="Submit">
+    <div>
+        <input class="btn btn-danger" type="submit" value="Delete">
+        <a href="/items/types" class="btn btn-secondary">Cancel</a>
+    </div>
 </form>
+{% endblock %}
