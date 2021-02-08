@@ -92,3 +92,11 @@ def item_add(request):
         form = ItemForm()
 
     return render(request, 'items/item-add.html', {'form': form})
+
+def item_delete(request, id):
+    if request.method == 'POST':
+        Item.objects.get(pk=id).delete()
+
+        return redirect(f'/items/items')
+
+    return render(request, 'items/item-delete.html')

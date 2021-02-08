@@ -13,6 +13,7 @@ urlpatterns = [
     path('items', views.items_listing),
     path('items/<int:item_id>', views.item_detail),
     path('items/add', views.item_add),
+    path('items/<int:id>/delete', views.item_delete),
     #path('<int:member_id>', views.detail),
     #path('search/', views.search),
 ]
