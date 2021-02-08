@@ -6,7 +6,7 @@ urlpatterns = [
     # Item types
     path('types', views.types_listing),
     path('types/<int:type_id>', views.type_detail),
-    path('add-type', views.type_add),
+    path('types/add', views.type_add),
     path('types/<int:id>/delete', views.type_delete),
 
     # Items

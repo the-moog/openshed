@@ -35,7 +35,7 @@ def type_add(request):
 
             type.save()
 
-            return redirect(f'types/{type.id}')
+            return redirect(f'/items/types/{type.id}')
 
     else:
         form = TypeForm()
