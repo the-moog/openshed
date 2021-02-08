@@ -1,0 +1,6 @@
+<form action="delete" method="post">
+    {% csrf_token %}
+    {{ form }}
+    Are you sure?
+    <input type="submit" value="Submit">
+</form>

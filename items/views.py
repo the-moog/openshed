@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 
 from .models import ItemType, Item
-from .forms import TypeForm
+from .forms import TypeForm, TypeDeleteForm
 
 # Create your views here.
 def types_listing(request):
@@ -41,6 +41,20 @@ def type_add(request):
         form = TypeForm()
 
     return render(request, 'items/type-add.html', {'form': form})
+
+def type_delete(request, id):
+    if request.method == 'POST':
+        form = TypeDeleteForm(request.POST)
+
+        if form.is_valid():
+            ItemType.objects.filter(pk=id).delete()
+
+            return redirect('/items/types')
+
+    else:
+        form = TypeDeleteForm()
+
+    return render(request, 'items/type-delete.html', {'form': form})
 
 def items_listing(request):
     items = Item.objects.all().select_related('item_type').select_related('member')
