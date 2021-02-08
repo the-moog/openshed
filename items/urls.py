@@ -12,6 +12,7 @@ urlpatterns = [
     # Items
     path('items', views.items_listing),
     path('items/<int:item_id>', views.item_detail),
+    path('items/add', views.item_add),
     #path('<int:member_id>', views.detail),
     #path('search/', views.search),
 ]
