@@ -1,6 +1,12 @@
 {% extends 'openshed/base.html' %}
 
 {% block content %}
+<div class="float-right noprint">
+   <a class="btn btn-danger" href="/items/items/{{item.id}}/delete">
+      <span class="bi-trash"></span>
+      Delete
+   </a>
+</div>
 <div class="card" style="width: 18rem;">
   <div class="card-header">
     <strong>Item</strong>
