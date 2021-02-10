@@ -31,6 +31,11 @@
       <td>{{item.commissioning_date}}</td>
       <td>{{item.comment}}</td>
       <td>{{item.member.first_name}} {{item.member.last_name}}</td>
+      <td>
+        <a class="btn btn-danger" href="items/{{item.id}}/delete">
+          <span class="bi-trash"></span>
+        </a>
+      </td>
     </tr>
 {% endfor %}
   </tbody>
