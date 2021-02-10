@@ -76,7 +76,7 @@ def item_add(request):
             item = Item()
 
             item.item = form.cleaned_data['name']
-            item.item_type = ItemType.objects.get(pk=form.cleaned_data['type'])
+            item.item_type = form.cleaned_data['type']
 
             item.save()
 

@@ -1,8 +1,11 @@
 from django import forms
+from .models import ItemType
+
+from utilities.forms.fields import DynamicModelChoiceField
 
 class ItemForm(forms.Form):
     name = forms.CharField(label='name', max_length=100)
-    type = forms.IntegerField(label='Item type')
+    type = DynamicModelChoiceField(queryset=ItemType.objects.all(), display_field='type')
 
 class TypeForm(forms.Form):
     vendor = forms.CharField(label='vendor', max_length=50)
