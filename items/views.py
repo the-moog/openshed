@@ -77,6 +77,11 @@ def item_add(request):
 
             item.item = form.cleaned_data['name']
             item.item_type = form.cleaned_data['type']
+            item.member = form.cleaned_data['member']
+            item.serial = form.cleaned_data['serial']
+            item.size = form.cleaned_data['size']
+            item.commissioning_date = form.cleaned_data['commissioning_date']
+            item.comment = form.cleaned_data['comment']
 
             item.save()
 
