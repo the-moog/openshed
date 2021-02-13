@@ -1,7 +1,31 @@
 {% extends 'openshed/base.html' %}
 
 {% block content %}
+<div class="float-right noprint">
+   <a class="btn btn-primary" href="/members/members/add">
+      <span class="bi-plus"></span>
+      Add
+   </a>
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">First name</th>
+      <th scope="col">Last name</th>
+    </tr>
+  </thead>
+  <tbody>
 {% for member in members %}
-    <li>{{member.last_name}} {{member.first_name}}</li>
+    <tr>
+      <td>{{member.first_name}}</td>
+      <td>{{member.last_name}}</td>
+      <td>
+        <a class="btn btn-danger" href="members/{{member.id}}/delete">
+          <span class="bi-trash"></span>
+        </a>
+      </td>
+    </tr>
 {% endfor %}
+  </tbody>
+</table>
 {% endblock %}
