@@ -1,0 +1,7 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+{% for member in members %}
+    <li>{{member.last_name}} {{member.first_name}}</li>
+{% endfor %}
+{% endblock %}
