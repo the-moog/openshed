@@ -40,7 +40,7 @@ def type_add(request):
     else:
         form = TypeForm()
 
-    return render(request, 'items/type-add.html', {'form': form})
+    return render(request, 'items/type-edit.html', {'form': form})
 
 def type_delete(request, id):
     if request.method == 'POST':
@@ -90,7 +90,7 @@ def item_add(request):
     else:
         form = ItemForm()
 
-    return render(request, 'items/item-add.html', {'form': form})
+    return render(request, 'items/item-edit.html', {'form': form})
 
 def item_delete(request, id):
     if request.method == 'POST':
