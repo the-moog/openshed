@@ -32,6 +32,9 @@
       <td>{{item.comment}}</td>
       <td>{{item.member.first_name}} {{item.member.last_name}}</td>
       <td>
+        <a class="btn btn-warning" href="items/{{item.id}}/edit">
+          <span class="bi-pen"></span>
+        </a>
         <a class="btn btn-danger" href="items/{{item.id}}/delete">
           <span class="bi-trash"></span>
         </a>

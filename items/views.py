@@ -42,6 +42,28 @@ def type_add(request):
 
     return render(request, 'items/type-edit.html', {'form': form})
 
+def type_edit(request, id):
+    type = ItemType.objects.get(pk=id)
+
+    if request.method == 'POST':
+        form = TypeForm(request.POST)
+
+        if form.is_valid():
+            type.vendor = form.cleaned_data['vendor']
+            type.type = form.cleaned_data['type']
+            type.description = form.cleaned_data['description']
+
+            type.save()
+
+            return redirect(f'/items/types/{type.id}')
+
+    else:
+        form = TypeForm(initial={'vendor': type.vendor,
+                                 'type': type.type,
+                                 'description': type.description})
+
+    return render(request, 'items/type-edit.html', {'form': form})
+
 def type_delete(request, id):
     if request.method == 'POST':
         ItemType.objects.get(pk=id).delete()
@@ -89,6 +111,36 @@ def item_add(request):
 
     else:
         form = ItemForm()
+
+    return render(request, 'items/item-edit.html', {'form': form})
+
+def item_edit(request, id):
+    item = Item.objects.get(pk=id)
+
+    if request.method == 'POST':
+        form = ItemForm(request.POST)
+
+        if form.is_valid():
+            item.item = form.cleaned_data['name']
+            item.item_type = form.cleaned_data['type']
+            item.member = form.cleaned_data['member']
+            item.serial = form.cleaned_data['serial']
+            item.size = form.cleaned_data['size']
+            item.commissioning_date = form.cleaned_data['commissioning_date']
+            item.comment = form.cleaned_data['comment']
+
+            item.save()
+
+            return redirect(f'/items/items/{item.id}')
+
+    else:
+        form = ItemForm(initial={'name': item.item,
+                                 'type': item.item_type,
+                                 'serial': item.serial,
+                                 'size': item.size,
+                                 'commissioning_date': item.commissioning_date,
+                                 'comment': item.comment,
+                                 'member': item.member})
 
     return render(request, 'items/item-edit.html', {'form': form})
 
