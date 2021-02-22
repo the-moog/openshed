@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 
-from .models import ItemType, Item
-from .forms import TypeForm, ItemForm
+from .models import ItemType, Item, Vendor
+from .forms import TypeForm, ItemForm, VendorForm
 
 # Create your views here.
 def types_listing(request):
@@ -151,3 +151,69 @@ def item_delete(request, id):
         return redirect(f'/items/items')
 
     return render(request, 'items/item-delete.html')
+
+"""
+Vendors views.
+"""
+
+def vendors_listing(request):
+    vendors = Vendor.objects.all()
+
+    context = {
+        'vendors': vendors
+    }
+
+    return render(request, 'items/vendors.html', context)
+
+def vendor_detail(request, id):
+    vendor = Vendor.objects.get(pk=id)
+
+    context = {
+        'vendor': vendor
+    }
+
+    return render(request, 'items/vendor.html', context)
+
+def vendor_add(request):
+    if request.method == 'POST':
+        form = VendorForm(request.POST)
+
+        if form.is_valid():
+            vendor = Vendor()
+
+            vendor.name = form.cleaned_data['name']
+
+            vendor.save()
+
+            return redirect(f'/items/vendors/{vendor.id}')
+
+    else:
+        form = VendorForm()
+
+    return render(request, 'items/vendor-edit.html', {'form': form})
+
+def vendor_edit(request, id):
+    vendor = Vendor.objects.get(pk=id)
+
+    if request.method == 'POST':
+        form = VendorForm(request.POST)
+
+        if form.is_valid():
+            vendor.name = form.cleaned_data['name']
+
+            vendor.save()
+
+            return redirect(f'/items/vendors/{vendor.id}')
+
+    else:
+        form = VendorForm(initial={'name': vendor.name})
+
+    return render(request, 'items/vendor-edit.html', {'form': form})
+
+def vendor_delete(request, id):
+    if request.method == 'POST':
+        Vendor.objects.get(pk=id).delete()
+
+        return redirect('/items/vendors')
+
+    return render(request, 'items/vendor-delete.html')

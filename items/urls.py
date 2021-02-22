@@ -18,4 +18,11 @@ urlpatterns = [
     path('items/<int:id>/delete', views.item_delete),
     #path('<int:member_id>', views.detail),
     #path('search/', views.search),
+
+    # Vendors
+    path('vendors', views.vendors_listing),
+    path('vendors/<int:id>', views.vendor_detail),
+    path('vendors/add', views.vendor_add),
+    path('vendors/<int:id>/edit', views.vendor_edit),
+    path('vendors/<int:id>/delete', views.vendor_delete),
 ]

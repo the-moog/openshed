@@ -1,6 +1,10 @@
 from django.db import models
 from members.models import *
 
+# Vendors.
+class Vendor(models.Model):
+    name = models.CharField(max_length=20)
+
 # Item types.
 class ItemType(models.Model):
     vendor = models.CharField(max_length=20, null=True)
