@@ -7,8 +7,11 @@ import datetime
 
 from utilities.forms.fields import DynamicModelChoiceField
 
+class VendorForm(forms.Form):
+    name = forms.CharField(max_length=20)
+
 class ItemForm(forms.Form):
-    name = forms.CharField(max_length=100)
+    name = forms.CharField(max_length=20)
     type = DynamicModelChoiceField(queryset=ItemType.objects.all(), display_field='type')
     serial = forms.CharField(max_length=20, required=False)
     size = forms.CharField(max_length=5, required=False)
@@ -17,6 +20,6 @@ class ItemForm(forms.Form):
     member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name')
 
 class TypeForm(forms.Form):
-    vendor = forms.CharField(max_length=50)
-    type = forms.CharField(max_length=50)
+    vendor = forms.CharField(max_length=20)
+    type = forms.CharField(max_length=20)
     description = forms.CharField(max_length=30)
