@@ -1,0 +1,31 @@
+{% extends 'openshed/base.html' %}
+{% load form_helpers %}
+
+{% block content %}
+    <form action="" method="post" enctype="multipart/form-data" class="form form-horizontal">
+        {% csrf_token %}
+        <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+        {% block form %}
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>{{ obj_type|capfirst }}</strong></div>
+                <div class="panel-body">
+                    {% block form_fields %}
+                        {% render_form form %}
+                    {% endblock %}
+                </div>
+            </div>
+        {% endblock %}
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+        {% if obj.pk %}
+            <input type="submit" value="Update">
+        {% else %}
+            <input type="submit" value="Create">
+        {% endif %}
+        </div>
+        </div>
+    </form>
+{% endblock %}

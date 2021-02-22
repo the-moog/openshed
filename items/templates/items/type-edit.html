@@ -1,9 +1,8 @@
-{% extends 'openshed/base.html' %}
+{% extends 'generic/object_edit.html' %}
+{% load form_helpers %}
 
-{% block content %}
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit">
-</form>
+{% block form %}
+    {% render_field form.vendor %}
+    {% render_field form.type %}
+    {% render_field form.description %}
 {% endblock %}
