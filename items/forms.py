@@ -1,5 +1,5 @@
 from django import forms
-from .models import ItemType
+from .models import ItemType, Vendor
 
 from members.models import Member
 
@@ -20,6 +20,6 @@ class ItemForm(forms.Form):
     member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name')
 
 class TypeForm(forms.Form):
-    vendor = forms.CharField(max_length=20)
+    vendor = DynamicModelChoiceField(queryset=Vendor.objects.all(), display_field='name')
     type = forms.CharField(max_length=20)
     description = forms.CharField(max_length=30)

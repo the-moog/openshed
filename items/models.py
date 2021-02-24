@@ -7,7 +7,7 @@ class Vendor(models.Model):
 
 # Item types.
 class ItemType(models.Model):
-    vendor = models.CharField(max_length=20, null=True)
+    vendor = models.ForeignKey(Vendor, null=True, on_delete=models.PROTECT)
     type = models.CharField(max_length=20)
     description = models.CharField(max_length=30)
 

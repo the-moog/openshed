@@ -18,7 +18,7 @@
   <tbody>
 {% for item_type in item_types %}
     <tr>
-      <td>{{item_type.vendor}}</td>
+      <td><a href="vendors/{{item_type.vendor.id}}">{{item_type.vendor.name}}</a></td>
       <td><a href="types/{{item_type.id}}">{{item_type.type}}</a></td>
       <td>{{item_type.description}}</td>
       <td>

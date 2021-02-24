@@ -24,7 +24,7 @@
 {% for item in items %}
     <tr>
       <td><a href="items/{{item.id}}">{{item.item}}</a></td>
-      <td>{{item.item_type.vendor}}</td>
+      <td><a href="vendors/{{item.item_type.vendor.id}}">{{item.item_type.vendor.name}}</a></td>
       <td><a href="types/{{item.item_type.id}}">{{item.item_type.type}}</a></td>
       <td>{{item.serial}}</td>
       <td>{{item.size}}</td>
