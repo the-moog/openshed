@@ -83,7 +83,7 @@ DATABASES = {
         'NAME': '',
         'USER': '',
         'PASSWORD': '',
-        'HOST': 'dumbo.db.elephantsql.com',
+        'HOST': '',
         'PORT': '5432',
     }
 }
