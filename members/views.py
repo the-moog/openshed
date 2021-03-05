@@ -18,9 +18,12 @@ def members_listing(request):
 
 def detail(request, member_id):
     member = Member.objects.get(pk=member_id)
-    message = f"Nom: {member.last_name} Prénom: {member.first_name}"
 
-    return HttpResponse(message)
+    context = {
+        'member': member
+    }
+
+    return render(request, 'members/member.html', context)
 
 def search(request):
     query = request.GET.get('query')
