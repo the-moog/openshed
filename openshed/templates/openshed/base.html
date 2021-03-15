@@ -42,6 +42,14 @@
           <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         </form>
+        <ul class="nav navbar-nav navbar-right">
+          {% if user.is_authenticated %}
+          <p>{{ user.username }}</p>
+          <a href="{% url 'logout' %}" class="icon bi-box-arrow-right"></a>
+          {% else %}
+          <a href="{% url 'login' %}" class="icon bi-box-arrow-in-right">Log in</a>
+          {% endif %}
+        </ul>
       </div>
     </nav>
 

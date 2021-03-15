@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 from .models import Member
@@ -6,6 +7,7 @@ from .forms import MemberForm
 
 # Create your views here.
 
+@login_required
 def members_listing(request):
     members = Member.objects.all().order_by('last_name', 'first_name')
     formatted_members = ["<li>{} {}</li>".format(member.last_name, member.first_name) for member in members]
@@ -17,6 +19,7 @@ def members_listing(request):
 
     return render(request, 'members/members.html', context)
 
+@login_required
 def detail(request, member_id):
     member = Member.objects.get(pk=member_id)
 
@@ -26,6 +29,7 @@ def detail(request, member_id):
 
     return render(request, 'members/member.html', context)
 
+@login_required
 def member_add(request):
     if request.method == 'POST':
         form = MemberForm(request.POST)
@@ -45,6 +49,7 @@ def member_add(request):
 
     return render(request, 'members/member-edit.html', {'form': form})
 
+@login_required
 def member_edit(request, id):
     member = Member.objects.get(pk=id)
 
@@ -65,6 +70,7 @@ def member_edit(request, id):
 
     return render(request, 'members/member-edit.html', {'form': form})
 
+@login_required
 def member_delete(request, id):
     if request.method == 'POST':
         Member.objects.get(pk=id).delete()
@@ -73,6 +79,7 @@ def member_delete(request, id):
 
     return render(request, 'members/member-delete.html')
 
+@login_required
 def search(request):
     query = request.GET.get('query')
 

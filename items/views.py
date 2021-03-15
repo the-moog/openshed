@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 
 from .models import ItemType, Item, Vendor
 from .forms import TypeForm, ItemForm, VendorForm
 
 # Create your views here.
+@login_required
 def types_listing(request):
     item_types = ItemType.objects.all()
 
@@ -13,6 +15,7 @@ def types_listing(request):
 
     return render(request, 'items/types.html', context)
 
+@login_required
 def type_detail(request, type_id):
     type = ItemType.objects.get(pk=type_id)
 
@@ -22,6 +25,7 @@ def type_detail(request, type_id):
 
     return render(request, 'items/type.html', context)
 
+@login_required
 def type_add(request):
     if request.method == 'POST':
         form = TypeForm(request.POST)
@@ -42,6 +46,7 @@ def type_add(request):
 
     return render(request, 'items/type-edit.html', {'form': form})
 
+@login_required
 def type_edit(request, id):
     type = ItemType.objects.get(pk=id)
 
@@ -64,6 +69,7 @@ def type_edit(request, id):
 
     return render(request, 'items/type-edit.html', {'form': form})
 
+@login_required
 def type_delete(request, id):
     if request.method == 'POST':
         ItemType.objects.get(pk=id).delete()
@@ -72,6 +78,7 @@ def type_delete(request, id):
 
     return render(request, 'items/type-delete.html')
 
+@login_required
 def items_listing(request):
     items = Item.objects.all().select_related('item_type').select_related('member')
 
@@ -81,6 +88,7 @@ def items_listing(request):
 
     return render(request, 'items/items.html', context)
 
+@login_required
 def item_detail(request, item_id):
     item = Item.objects.get(pk=item_id)
 
@@ -90,6 +98,7 @@ def item_detail(request, item_id):
 
     return render(request, 'items/item.html', context)
 
+@login_required
 def item_add(request):
     if request.method == 'POST':
         form = ItemForm(request.POST)
@@ -114,6 +123,7 @@ def item_add(request):
 
     return render(request, 'items/item-edit.html', {'form': form})
 
+@login_required
 def item_edit(request, id):
     item = Item.objects.get(pk=id)
 
@@ -144,6 +154,7 @@ def item_edit(request, id):
 
     return render(request, 'items/item-edit.html', {'form': form})
 
+@login_required
 def item_delete(request, id):
     if request.method == 'POST':
         Item.objects.get(pk=id).delete()
@@ -156,6 +167,7 @@ def item_delete(request, id):
 Vendors views.
 """
 
+@login_required
 def vendors_listing(request):
     vendors = Vendor.objects.all()
 
@@ -165,6 +177,7 @@ def vendors_listing(request):
 
     return render(request, 'items/vendors.html', context)
 
+@login_required
 def vendor_detail(request, id):
     vendor = Vendor.objects.get(pk=id)
 
@@ -174,6 +187,7 @@ def vendor_detail(request, id):
 
     return render(request, 'items/vendor.html', context)
 
+@login_required
 def vendor_add(request):
     if request.method == 'POST':
         form = VendorForm(request.POST)
@@ -192,6 +206,7 @@ def vendor_add(request):
 
     return render(request, 'items/vendor-edit.html', {'form': form})
 
+@login_required
 def vendor_edit(request, id):
     vendor = Vendor.objects.get(pk=id)
 
@@ -210,6 +225,7 @@ def vendor_edit(request, id):
 
     return render(request, 'items/vendor-edit.html', {'form': form})
 
+@login_required
 def vendor_delete(request, id):
     if request.method == 'POST':
         Vendor.objects.get(pk=id).delete()
