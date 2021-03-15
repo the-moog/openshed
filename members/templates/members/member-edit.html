@@ -1,0 +1,7 @@
+{% extends 'generic/object_edit.html' %}
+{% load form_helpers %}
+
+{% block form %}
+    {% render_field form.first_name %}
+    {% render_field form.last_name %}
+{% endblock %}

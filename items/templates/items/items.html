@@ -30,7 +30,7 @@
       <td>{{item.size}}</td>
       <td>{{item.commissioning_date}}</td>
       <td>{{item.comment}}</td>
-      <td>{{item.member.first_name}} {{item.member.last_name}}</td>
+      <td><a href="/members/members/{{item.member.id}}">{{item.member.first_name}} {{item.member.last_name}}</a></td>
       <td>
         <a class="btn btn-warning" href="items/{{item.id}}/edit">
           <span class="bi-pen"></span>
