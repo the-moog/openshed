@@ -1,0 +1,25 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+<div class="float-right noprint">
+   <a class="btn btn-warning" href="{{category.id}}/edit">
+      <span class="bi-pen"></span>
+      Edit
+   </a>
+   <a class="btn btn-danger" href="{{category.id}}/delete">
+      <span class="bi-trash"></span>
+      Delete
+   </a>
+</div>
+<div class="card" style="width: 18rem;">
+  <div class="card-header">
+    <strong>Category</strong>
+  </div>
+  <table class="table table-hover">
+    <tr>
+      <td>Name</td>
+      <td>{{category.name}}</td>
+    </tr>
+  </table>
+</div>
+{% endblock %}

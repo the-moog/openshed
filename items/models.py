@@ -5,9 +5,14 @@ from members.models import *
 class Vendor(models.Model):
     name = models.CharField(max_length=20)
 
+# Categories.
+class Category(models.Model):
+    name = models.CharField(max_length=20)
+
 # Item types.
 class ItemType(models.Model):
     vendor = models.ForeignKey(Vendor, null=True, on_delete=models.PROTECT)
+    category = models.ForeignKey(Category, null=True, on_delete=models.PROTECT)
     type = models.CharField(max_length=20)
     description = models.CharField(max_length=30)
 

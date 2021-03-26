@@ -1,5 +1,5 @@
 from django import forms
-from .models import ItemType, Vendor
+from .models import ItemType, Vendor, Category
 
 from members.models import Member
 
@@ -8,6 +8,9 @@ import datetime
 from utilities.forms.fields import DynamicModelChoiceField
 
 class VendorForm(forms.Form):
+    name = forms.CharField(max_length=20)
+
+class CategoryForm(forms.Form):
     name = forms.CharField(max_length=20)
 
 class ItemForm(forms.Form):
@@ -20,6 +23,7 @@ class ItemForm(forms.Form):
     member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name')
 
 class TypeForm(forms.Form):
+    category = DynamicModelChoiceField(queryset=Category.objects.all(), display_field='name')
     vendor = DynamicModelChoiceField(queryset=Vendor.objects.all(), display_field='name', required=False)
     type = forms.CharField(max_length=20)
     description = forms.CharField(max_length=30)

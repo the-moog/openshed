@@ -3,6 +3,13 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # Categories
+    path('categories', views.categories_listing),
+    path('categories/<int:id>', views.category_detail),
+    path('categories/add', views.category_add),
+    path('categories/<int:id>/edit', views.category_edit),
+    path('categories/<int:id>/delete', views.category_delete),
+
     # Item types
     path('types', views.types_listing),
     path('types/<int:type_id>', views.type_detail),

@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .models import ItemType, Item, Vendor
-from .forms import TypeForm, ItemForm, VendorForm
+from .models import ItemType, Item, Vendor, Category
+from .forms import TypeForm, ItemForm, VendorForm, CategoryForm
 
 # Create your views here.
 @login_required
@@ -33,6 +33,7 @@ def type_add(request):
         if form.is_valid():
             type = ItemType()
 
+            type.category = form.cleaned_data['category']
             type.vendor = form.cleaned_data['vendor']
             type.type = form.cleaned_data['type']
             type.description = form.cleaned_data['description']
@@ -54,6 +55,7 @@ def type_edit(request, id):
         form = TypeForm(request.POST)
 
         if form.is_valid():
+            type.category = form.cleaned_data['category']
             type.vendor = form.cleaned_data['vendor']
             type.type = form.cleaned_data['type']
             type.description = form.cleaned_data['description']
@@ -63,7 +65,8 @@ def type_edit(request, id):
             return redirect(f'/items/types/{type.id}')
 
     else:
-        form = TypeForm(initial={'vendor': type.vendor,
+        form = TypeForm(initial={'category': type.category,
+                                 'vendor': type.vendor,
                                  'type': type.type,
                                  'description': type.description})
 
@@ -233,3 +236,74 @@ def vendor_delete(request, id):
         return redirect('/items/vendors')
 
     return render(request, 'items/vendor-delete.html')
+
+"""
+Categories views.
+"""
+
+@login_required
+def categories_listing(request):
+    categories = Category.objects.all()
+
+    context = {
+        'categories': categories
+    }
+
+    return render(request, 'items/categories.html', context)
+
+@login_required
+def category_detail(request, id):
+    category = Category.objects.get(pk=id)
+
+    context = {
+        'category': category
+    }
+
+    return render(request, 'items/category.html', context)
+
+@login_required
+def category_add(request):
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+
+        if form.is_valid():
+            category = Category()
+
+            category.name = form.cleaned_data['name']
+
+            category.save()
+
+            return redirect(f'/items/categories/{category.id}')
+
+    else:
+        form = CategoryForm()
+
+    return render(request, 'items/category-edit.html', {'form': form})
+
+@login_required
+def category_edit(request, id):
+    category = Category.objects.get(pk=id)
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+
+        if form.is_valid():
+            category.name = form.cleaned_data['name']
+
+            category.save()
+
+            return redirect(f'/items/categories/{category.id}')
+
+    else:
+        form = CategoryForm(initial={'name': category.name})
+
+    return render(request, 'items/category-edit.html', {'form': form})
+
+@login_required
+def category_delete(request, id):
+    if request.method == 'POST':
+        Category.objects.get(pk=id).delete()
+
+        return redirect('/items/categories')
+
+    return render(request, 'items/category-delete.html')
