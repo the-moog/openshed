@@ -20,7 +20,7 @@ class ItemForm(forms.Form):
     size = forms.CharField(max_length=5, required=False)
     commissioning_date = forms.DateField(initial=datetime.date.today)
     comment = forms.CharField(max_length=50, required=False)
-    member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name')
+    member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name', required=False)
 
 class TypeForm(forms.Form):
     category = DynamicModelChoiceField(queryset=Category.objects.all(), display_field='name')
