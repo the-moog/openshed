@@ -24,6 +24,10 @@
       <td>Last name</td>
       <td>{{member.last_name}}</td>
     </tr>
+    <tr>
+      <td>Items</td>
+      <td><a href="/items/items?member={{member.pk}}">{{item_count}}</a></td>
+    </tr>
   </table>
 </div>
 {% endblock %}

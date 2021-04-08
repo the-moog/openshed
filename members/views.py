@@ -5,6 +5,8 @@ from django.db.models import Q
 from .models import Member
 from .forms import MemberForm
 
+from items.models import Item
+
 # Create your views here.
 
 @login_required
@@ -22,9 +24,11 @@ def members_listing(request):
 @login_required
 def detail(request, member_id):
     member = Member.objects.get(pk=member_id)
+    item_count = Item.objects.filter(member=member_id).count()
 
     context = {
-        'member': member
+        'member': member,
+        'item_count': item_count
     }
 
     return render(request, 'members/member.html', context)

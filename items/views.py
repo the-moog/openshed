@@ -24,9 +24,11 @@ def types_listing(request):
 @login_required
 def type_detail(request, type_id):
     type = ItemType.objects.get(pk=type_id)
+    item_count = Item.objects.filter(item_type=type).count()
 
     context = {
-        'type': type
+        'type': type,
+        'item_count': item_count
     }
 
     return render(request, 'items/type.html', context)
@@ -201,9 +203,13 @@ def vendors_listing(request):
 @login_required
 def vendor_detail(request, id):
     vendor = Vendor.objects.get(pk=id)
+    type_count = ItemType.objects.filter(vendor=id).count()
+    item_count = Item.objects.select_related('item_type').filter(item_type__vendor=id).count()
 
     context = {
-        'vendor': vendor
+        'vendor': vendor,
+        'type_count': type_count,
+        'item_count': item_count
     }
 
     return render(request, 'items/vendor.html', context)
@@ -272,9 +278,13 @@ def categories_listing(request):
 @login_required
 def category_detail(request, id):
     category = Category.objects.get(pk=id)
+    item_type_count = ItemType.objects.filter(category=id).count()
+    item_count = Item.objects.select_related('item_type').filter(item_type__category=id).count()
 
     context = {
-        'category': category
+        'category': category,
+        'item_type_count': item_type_count,
+        'item_count': item_count
     }
 
     return render(request, 'items/category.html', context)

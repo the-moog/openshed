@@ -20,6 +20,14 @@
       <td>Name</td>
       <td>{{category.name}}</td>
     </tr>
+    <tr>
+      <td>Types</td>
+      <td><a href="../types?category={{category.id}}">{{item_type_count}}</a></td>
+    </tr>
+    <tr>
+      <td>Items</td>
+      <td><a href="../items?category={{category.id}}">{{item_count}}</a></td>
+    </tr>
   </table>
 </div>
 {% endblock %}

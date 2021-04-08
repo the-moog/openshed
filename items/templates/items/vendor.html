@@ -20,6 +20,14 @@
       <td>Vendor</td>
       <td>{{vendor.name}}</td>
     </tr>
+    <tr>
+      <td>Types</td>
+      <td><a href="../types?vendor={{vendor.id}}">{{type_count}}</a></td>
+    </tr>
+    <tr>
+      <td>Items</td>
+      <td><a href="../items?vendor={{vendor.id}}">{{item_count}}</a></td>
+    </tr>
   </table>
 </div>
 {% endblock %}
