@@ -9,6 +9,12 @@ from .forms import TypeForm, ItemForm, VendorForm, CategoryForm
 def types_listing(request):
     item_types = ItemType.objects.all()
 
+    if request.GET.get('category') != None:
+        item_types = item_types.filter(category=request.GET.get('category'))
+
+    if request.GET.get('vendor') != None:
+        item_types = item_types.filter(vendor=request.GET.get('vendor'))
+
     context = {
         'item_types': item_types
     }
@@ -83,7 +89,19 @@ def type_delete(request, id):
 
 @login_required
 def items_listing(request):
-    items = Item.objects.all().select_related('item_type').select_related('member')
+    items = Item.objects.select_related('item_type').select_related('member')
+
+    if request.GET.get('vendor') != None:
+        items = items.filter(item_type__vendor=request.GET.get('vendor'))
+
+    if request.GET.get('category') != None:
+        items = items.filter(item_type__category=request.GET.get('category'))
+
+    if request.GET.get('type') != None:
+        items = items.filter(item_type=request.GET.get('type'))
+
+    if request.GET.get('member') != None:
+        items = items.filter(member=request.GET.get('member'))
 
     context = {
         'items': items
