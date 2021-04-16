@@ -24,4 +24,5 @@ class Item(models.Model):
   size = models.CharField(max_length=5, null=True)
   member = models.ForeignKey(Member, null=True, on_delete=models.SET_NULL)
   commissioning_date = models.DateField(null=True)
+  decommissioning_date = models.DateField(null=True)
   comment = models.CharField(max_length=50, null=True)

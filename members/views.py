@@ -24,7 +24,7 @@ def members_listing(request):
 @login_required
 def detail(request, member_id):
     member = Member.objects.get(pk=member_id)
-    item_count = Item.objects.filter(member=member_id).count()
+    item_count = Item.objects.filter(member=member_id, decommissioning_date=None).count()
 
     context = {
         'member': member,

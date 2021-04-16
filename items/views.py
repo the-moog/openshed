@@ -105,6 +105,11 @@ def items_listing(request):
     if request.GET.get('member') != None:
         items = items.filter(member=request.GET.get('member'))
 
+    if request.GET.get('decommissioned', 'false') == 'true':
+        items = items.exclude(decommissioning_date=None)
+    else:
+        items = items.filter(decommissioning_date=None)
+
     context = {
         'items': items
     }
@@ -160,6 +165,7 @@ def item_edit(request, id):
             item.serial = form.cleaned_data['serial']
             item.size = form.cleaned_data['size']
             item.commissioning_date = form.cleaned_data['commissioning_date']
+            item.decommissioning_date = form.cleaned_data['decommissioning_date']
             item.comment = form.cleaned_data['comment']
 
             item.save()
@@ -172,6 +178,7 @@ def item_edit(request, id):
                                  'serial': item.serial,
                                  'size': item.size,
                                  'commissioning_date': item.commissioning_date,
+                                 'decommissioning_date': item.decommissioning_date,
                                  'comment': item.comment,
                                  'member': item.member})
 
