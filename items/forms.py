@@ -18,7 +18,7 @@ class ItemForm(forms.Form):
     type = DynamicModelChoiceField(queryset=ItemType.objects.all(), display_field='type')
     serial = forms.CharField(max_length=20, required=False)
     size = forms.CharField(max_length=5, required=False)
-    commissioning_date = forms.DateField(initial=datetime.date.today)
+    commissioning_date = forms.DateField(initial=datetime.date.today, required=False)
     decommissioning_date = forms.DateField(required=False)
     comment = forms.CharField(max_length=50, required=False)
     member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name', required=False)
