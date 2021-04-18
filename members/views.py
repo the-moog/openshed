@@ -15,6 +15,11 @@ def members_listing(request):
     formatted_members = ["<li>{} {}</li>".format(member.last_name, member.first_name) for member in members]
     message = """<ul>{}</ul>""".format("\n".join(formatted_members))
 
+    if request.GET.get('departed', 'false') == 'true':
+        members = members.exclude(departure_date=None)
+    else:
+        members = members.filter(departure_date=None)
+
     context = {
         'members': members
     }
@@ -63,6 +68,7 @@ def member_edit(request, id):
         if form.is_valid():
             member.first_name = form.cleaned_data['first_name']
             member.last_name = form.cleaned_data['last_name']
+            member.departure_date = form.cleaned_data['departure_date']
 
             member.save()
 
@@ -70,7 +76,8 @@ def member_edit(request, id):
 
     else:
         form = MemberForm(initial={'first_name': member.first_name,
-                                   'last_name': member.last_name})
+                                   'last_name': member.last_name,
+                                   'departure_date': member.departure_date})
 
     return render(request, 'members/member-edit.html', {'form': form})
 
