@@ -79,7 +79,7 @@ def member_edit(request, id):
                                    'last_name': member.last_name,
                                    'departure_date': member.departure_date})
 
-    return render(request, 'members/member-edit.html', {'form': form})
+    return render(request, 'members/member-edit.html', {'form': form, 'obj': member})
 
 @login_required
 def member_delete(request, id):

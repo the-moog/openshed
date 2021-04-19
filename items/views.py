@@ -78,7 +78,7 @@ def type_edit(request, id):
                                  'type': type.type,
                                  'description': type.description})
 
-    return render(request, 'items/type-edit.html', {'form': form})
+    return render(request, 'items/type-edit.html', {'form': form, 'obj': type})
 
 @login_required
 def type_delete(request, id):
@@ -182,7 +182,7 @@ def item_edit(request, id):
                                  'comment': item.comment,
                                  'member': item.member})
 
-    return render(request, 'items/item-edit.html', {'form': form})
+    return render(request, 'items/item-edit.html', {'form': form, 'obj': item})
 
 @login_required
 def item_delete(request, id):
@@ -257,7 +257,7 @@ def vendor_edit(request, id):
     else:
         form = VendorForm(initial={'name': vendor.name})
 
-    return render(request, 'items/vendor-edit.html', {'form': form})
+    return render(request, 'items/vendor-edit.html', {'form': form, 'obj': vendor})
 
 @login_required
 def vendor_delete(request, id):
@@ -332,7 +332,7 @@ def category_edit(request, id):
     else:
         form = CategoryForm(initial={'name': category.name})
 
-    return render(request, 'items/category-edit.html', {'form': form})
+    return render(request, 'items/category-edit.html', {'form': form, 'obj': category})
 
 @login_required
 def category_delete(request, id):
