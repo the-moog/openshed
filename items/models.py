@@ -3,22 +3,22 @@ from members.models import *
 
 # Vendors.
 class Vendor(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20, unique=True)
 
 # Categories.
 class Category(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=20, unique=True)
 
 # Item types.
 class ItemType(models.Model):
     vendor = models.ForeignKey(Vendor, null=True, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, null=True, on_delete=models.PROTECT)
-    type = models.CharField(max_length=20)
+    type = models.CharField(max_length=20, unique=True)
     description = models.CharField(max_length=30, blank=True, default='')
 
 # Items
 class Item(models.Model):
-  item = models.CharField(max_length=20)
+  item = models.CharField(max_length=20, unique=True)
   item_type = models.ForeignKey(ItemType, on_delete=models.PROTECT)
   serial = models.CharField(max_length=20, blank=True, default='')
   size = models.CharField(max_length=5, blank=True, default='')
