@@ -24,7 +24,7 @@ class ItemForm(forms.Form):
     member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name', required=False)
 
 class TypeForm(forms.Form):
-    category = DynamicModelChoiceField(queryset=Category.objects.all(), display_field='name')
+    category = DynamicModelChoiceField(queryset=Category.objects.all(), display_field='name', required=False)
     vendor = DynamicModelChoiceField(queryset=Vendor.objects.all(), display_field='name', required=False)
     type = forms.CharField(max_length=20)
     description = forms.CharField(max_length=30, required=False)
