@@ -3,6 +3,27 @@ OpenShed is a Django application to manage inventory. It has been developed to m
 
 Openshed organizes items per types and categories. It keeps trace of who borrows the equipement.
 
+## Installation
+
+edit openshet/settings.py
+Put a secret key between the quotes in 
+`
+SECRET_KEY = 'some secret here'
+`
+
+Set the permitted host(s)
+`
+ALLOWED_HOSTS = ['localhost']
+`
+
+Set a language and timezone
+`
+LANGUAGE_CODE = 'en'
+TIME_ZONE = 'Europe/London'
+`
+
+## Notes
+
 With OpenShed you can list all your equipments.
 ![Screenshot of items list](docs/media/items.png "Items view")
 
