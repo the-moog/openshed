@@ -5,36 +5,45 @@ Openshed organizes items per types and categories. It keeps trace of who borrows
 
 ## Installation
 
+### Get the source
+(assumes your user can create files in /opt)
+```bash
+cd /opt
+git clone https://github.com/BegBlev/openshed
+```
 
 ### Create a postgres database
-`
-apt-get install postgresql
-su postgres
+```bash
+sudo apt-get install postgresql
+sudo su postgres
 psql
+```
+```sql
 CREATE DATABASE equipment;
 CREATE USER equipment WITH PASSWORD 'secretpass';
 ALTER ROLE equipment SET client_encoding TO 'utf8';
 ALTER ROLE equipment SET default_transaction_isolation TO 'read committed';
 ALTER ROLE equipment SET timezone TO 'UTC';
 GRANT ALL PRIVILEGES ON DATABASE equipment TO equipment;
+
 \q
 exit
-`
+```
 
 ### Sensible settings
-edit openshed/settings.py
-Put a secret key between the quotes in 
-`
+Edit <b><i>openshed/settings.py</i></b><br>
+Put a secret key between the quotes
+```python
 SECRET_KEY = 'some secret here'
-`
+```
 
 Set the permitted host(s)
-`
+```python
 ALLOWED_HOSTS = ['localhost']
-`
+```
 
 Connect database
-`
+```python
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -45,28 +54,36 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-`
+```
 
 Set a language and timezone
-`
+```python
 LANGUAGE_CODE = 'en'
 TIME_ZONE = 'Europe/London'
-`
+```
 
 ### Install dependencies
-`
-apt-get install libpq-dev
-`
-
-
+```bash
+sudo apt-get install libpq-dev
+```
 
 ### Use pipenv to prevent dependency hell
-`
-pip3 install pipenv
+```bash
+sudo pip3 install pipenv
 cd /opt/openshed
 pipenv install
 pipenv update
-`
+```
+
+### Prepare and run
+```bash
+cd /opt/openshed
+pipenv shell
+./manage.py migrate
+./manage.py createsuperuser
+./manage.py runserver
+```
+
 
 
 
