@@ -7,6 +7,8 @@ name = "pypi"
 django-widget-tweaks = "*"
 django = "*"
 psycopg2 = "*"
+django-phone-field = "*"
+django-address = "*"
 
 [dev-packages]
 

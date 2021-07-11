@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'utilities',
+    'address',
+    'phone_field'
 ]
 
 MIDDLEWARE = [
@@ -133,3 +135,5 @@ STATIC_URL = '/static/'
 #Django 3.2 Migration
 #see https://dev.to/rubyflewtoo/upgrading-to-django-3-2-and-fixing-defaultautofield-warnings-518n
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+GOOGLE_API_KEY = 'AIzaSyD3xLJkVWir3ZzTjI_WPJygD3ilQoDAZA4'

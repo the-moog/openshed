@@ -13,6 +13,7 @@
     <tr>
       <th scope="col">Item</th>
       <th scope="col">Vendor</th>
+      <th scope="col">Supplier</th>
       <th scope="col">Type</th>
       <th scope="col">Serial</th>
       <th scope="col">Size</th>
@@ -26,6 +27,7 @@
     <tr>
       <td><a href="items/{{item.id}}">{{item.item}}</a></td>
       <td><a href="vendors/{{item.item_type.vendor.id}}">{{item.item_type.vendor.name}}</a></td>
+      <td><a href="suppliers/{{item.item_type.supplier.id}}">{{item.item_type.supplier.name}}</a></td>
       <td><a href="types/{{item.item_type.id}}">{{item.item_type.type}}</a></td>
       <td>{{item.serial}}</td>
       <td>{{item.size}}</td>

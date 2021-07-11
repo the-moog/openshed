@@ -1,0 +1,33 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+<div class="float-right noprint">
+   <a class="btn btn-primary" href="/items/suppliers/add">
+      <span class="bi-plus"></span>
+      Add
+   </a>
+</div>
+<h1>{% block title %}Suppliers{% endblock %}</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Suppliers</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for supplier in suppliers %}
+    <tr>
+      <td><a href="suppliers/{{supplier.id}}">{{supplier.name}}</a></td>
+      <td>
+        <a class="btn btn-warning" href="suppliers/{{supplier.id}}/edit">
+          <span class="bi-pen"></span>
+        </a>
+        <a class="btn btn-danger" href="suppliers/{{supplier.id}}/delete">
+          <span class="bi-trash"></span>
+        </a>
+      </td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

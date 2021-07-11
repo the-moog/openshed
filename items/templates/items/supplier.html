@@ -1,0 +1,55 @@
+{% extends 'openshed/base.html' %}
+
+
+{% block content %}
+<div class="float-right noprint">
+   <a class="btn btn-warning" href="{{supplier.id}}/edit">
+      <span class="bi-pen"></span>
+      Edit
+   </a>
+   <a class="btn btn-danger" href="{{supplier.id}}/delete">
+      <span class="bi-trash"></span>
+      Delete
+   </a>
+</div>
+<div class="card" style="width: 18rem;">
+  <div class="card-header">
+    <strong>Item type</strong>
+  </div>
+  <table class="table table-hover">
+    <tr>
+
+      <td>Vendor</td>
+      <td>{{supplier.name}}</td>
+    </tr>
+    <tr>
+      <td>Contact</td>
+      <td>{{supplier.contact}}</td>
+    </tr>
+    <tr>
+      <td>Address</td>
+      <td>{{supplier.address}}</td>
+    </tr>
+    <tr>
+      <td>Website</td>
+      <td>{{supplier.url}}</td>
+    </tr>
+    <tr>
+      <td>Telephone</td>
+      <td>{{supplier.phone}}</td>
+    </tr>
+    <tr>
+      <td>eMail</td>
+      <td>{{supplier.email}}</td>
+    </tr>
+    <tr>
+      <td>Types</td>
+      <td><a href="../types?supplier={{supplier.id}}">{{type_count}}</a></td>
+    </tr>
+    <tr>
+      <td>Items</td>
+      <td><a href="../items?supplier={{supplier.id}}">{{item_count}}</a></td>
+    </tr>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'generic/object_edit.html' %}
+{% load form_helpers %}
+
+{% block form %}
+    {% render_field form.name %}
+    {% render_field form.contact %}
+    {% render_field form.address %}
+    {% render_field form.url %}
+    {% render_field form.email %}
+    {% render_field form.phone %}
+{% endblock %}
