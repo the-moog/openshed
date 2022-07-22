@@ -1,3 +1,6 @@
 __pycache__/
 *~
 Pipfile.lock
+.idea/.gitignore
+password.env
+secretpass
