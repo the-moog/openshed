@@ -1,0 +1,21 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+<h1>{% block title %}Members{% endblock %}</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Item</th>
+      <th scope="col">Lent to</th>
+    </tr>
+  </thead>
+  <tbody>
+{% for hire in hires %}
+    <tr>
+      <td><a href="lending/{{hire.id}}">{{hire.loan.item}}</a></td>
+      <td><a href="lending/{{hire.id}}">{{hire.lent_to}}</a></td>
+    </tr>
+{% endfor %}
+  </tbody>
+</table>
+{% endblock %}

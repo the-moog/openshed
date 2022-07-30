@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Members model.
 class Member(models.Model):
     last_name = models.CharField(max_length=20)

@@ -1,13 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-
 from .models import Member
 from .forms import MemberForm
-
 from items.models import Item
+from django.http import HttpResponse
 
-# Create your views here.
 
 @login_required
 def members_listing(request):
@@ -26,6 +24,7 @@ def members_listing(request):
 
     return render(request, 'members/members.html', context)
 
+
 @login_required
 def detail(request, member_id):
     member = Member.objects.get(pk=member_id)
@@ -37,6 +36,7 @@ def detail(request, member_id):
     }
 
     return render(request, 'members/member.html', context)
+
 
 @login_required
 def member_add(request):
@@ -57,6 +57,7 @@ def member_add(request):
         form = MemberForm()
 
     return render(request, 'members/member-edit.html', {'form': form})
+
 
 @login_required
 def member_edit(request, id):
@@ -81,6 +82,7 @@ def member_edit(request, id):
 
     return render(request, 'members/member-edit.html', {'form': form, 'obj': member})
 
+
 @login_required
 def member_delete(request, id):
     if request.method == 'POST':
@@ -89,6 +91,7 @@ def member_delete(request, id):
         return redirect('/members/members')
 
     return render(request, 'members/member-delete.html')
+
 
 @login_required
 def search(request):

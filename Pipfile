@@ -6,11 +6,12 @@ name = "pypi"
 [packages]
 django-widget-tweaks = "*"
 django = "*"
-psycopg2 = "*"
+# Note Ubuntu package libpq-dev required unless you use sqlite or another db
+#psycopg2 = "*"
 django-phone-field = "*"
 django-address = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.6"
+python_version = "3.8"

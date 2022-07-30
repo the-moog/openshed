@@ -1,7 +1,5 @@
 from django import forms
 from .models import ItemType, Vendor, Category, Supplier
-
-from members.models import Member
 from phone_field import PhoneFormField
 from address.forms import AddressField
 
@@ -36,7 +34,7 @@ class ItemForm(forms.Form):
     commissioning_date = forms.DateField(initial=datetime.date.today, required=False)
     decommissioning_date = forms.DateField(required=False)
     comment = forms.CharField(max_length=50, required=False)
-    member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name', required=False)
+    #member = DynamicModelChoiceField(queryset=Member.objects.all(), display_field='display_name', required=False)
 
 
 class TypeForm(forms.Form):

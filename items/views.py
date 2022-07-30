@@ -1,18 +1,18 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-
 from .models import ItemType, Item, Vendor, Category, Supplier
 from .forms import TypeForm, ItemForm, VendorForm, CategoryForm, SupplierForm
+
 
 # Create your views here.
 @login_required
 def types_listing(request):
     item_types = ItemType.objects.all()
 
-    if request.GET.get('category') != None:
+    if request.GET.get('category') is not None:
         item_types = item_types.filter(category=request.GET.get('category'))
 
-    if request.GET.get('vendor') != None:
+    if request.GET.get('vendor') is not None:
         item_types = item_types.filter(vendor=request.GET.get('vendor'))
 
     context = {
@@ -20,6 +20,7 @@ def types_listing(request):
     }
 
     return render(request, 'items/types.html', context)
+
 
 @login_required
 def type_detail(request, type_id):
@@ -32,6 +33,7 @@ def type_detail(request, type_id):
     }
 
     return render(request, 'items/type.html', context)
+
 
 @login_required
 def type_add(request):
@@ -54,6 +56,7 @@ def type_add(request):
         form = TypeForm()
 
     return render(request, 'items/type-edit.html', {'form': form})
+
 
 @login_required
 def type_edit(request, id):
@@ -80,6 +83,7 @@ def type_edit(request, id):
 
     return render(request, 'items/type-edit.html', {'form': form, 'obj': type})
 
+
 @login_required
 def type_delete(request, id):
     if request.method == 'POST':
@@ -88,6 +92,7 @@ def type_delete(request, id):
         return redirect('/items/types')
 
     return render(request, 'items/type-delete.html')
+
 
 @login_required
 def items_listing(request):
@@ -102,8 +107,8 @@ def items_listing(request):
     if request.GET.get('type') != None:
         items = items.filter(item_type=request.GET.get('type'))
 
-    if request.GET.get('member') != None:
-        items = items.filter(member=request.GET.get('member'))
+    #if request.GET.get('member') != None:
+        #items = items.filter(member=request.GET.get('member'))
 
     if request.GET.get('decommissioned', 'false') == 'true':
         items = items.exclude(decommissioning_date=None)
@@ -116,6 +121,7 @@ def items_listing(request):
 
     return render(request, 'items/items.html', context)
 
+
 @login_required
 def item_detail(request, item_id):
     item = Item.objects.get(pk=item_id)
@@ -125,6 +131,7 @@ def item_detail(request, item_id):
     }
 
     return render(request, 'items/item.html', context)
+
 
 @login_required
 def item_add(request):
@@ -136,7 +143,7 @@ def item_add(request):
 
             item.item = form.cleaned_data['name']
             item.item_type = form.cleaned_data['type']
-            item.member = form.cleaned_data['member']
+            #item.member = form.cleaned_data['member']
             item.serial = form.cleaned_data['serial']
             item.size = form.cleaned_data['size']
             item.commissioning_date = form.cleaned_data['commissioning_date']
@@ -151,6 +158,7 @@ def item_add(request):
 
     return render(request, 'items/item-edit.html', {'form': form})
 
+
 @login_required
 def item_edit(request, id):
     item = Item.objects.get(pk=id)
@@ -161,7 +169,7 @@ def item_edit(request, id):
         if form.is_valid():
             item.item = form.cleaned_data['name']
             item.item_type = form.cleaned_data['type']
-            item.member = form.cleaned_data['member']
+            #item.member = form.cleaned_data['member']
             item.serial = form.cleaned_data['serial']
             item.size = form.cleaned_data['size']
             item.commissioning_date = form.cleaned_data['commissioning_date']
@@ -180,9 +188,11 @@ def item_edit(request, id):
                                  'commissioning_date': item.commissioning_date,
                                  'decommissioning_date': item.decommissioning_date,
                                  'comment': item.comment,
-                                 'member': item.member})
+                                 #'member': item.member
+                                 })
 
     return render(request, 'items/item-edit.html', {'form': form, 'obj': item})
+
 
 @login_required
 def item_delete(request, id):
@@ -193,9 +203,11 @@ def item_delete(request, id):
 
     return render(request, 'items/item-delete.html')
 
+
 """
 Vendors views.
 """
+
 
 @login_required
 def vendors_listing(request):
@@ -206,6 +218,7 @@ def vendors_listing(request):
     }
 
     return render(request, 'items/vendors.html', context)
+
 
 @login_required
 def vendor_detail(request, id):
@@ -220,6 +233,7 @@ def vendor_detail(request, id):
     }
 
     return render(request, 'items/vendor.html', context)
+
 
 @login_required
 def vendor_add(request):
@@ -240,6 +254,7 @@ def vendor_add(request):
 
     return render(request, 'items/vendor-edit.html', {'form': form})
 
+
 @login_required
 def vendor_edit(request, id):
     vendor = Vendor.objects.get(pk=id)
@@ -259,6 +274,7 @@ def vendor_edit(request, id):
 
     return render(request, 'items/vendor-edit.html', {'form': form, 'obj': vendor})
 
+
 @login_required
 def vendor_delete(request, id):
     if request.method == 'POST':
@@ -273,6 +289,7 @@ def vendor_delete(request, id):
 Supplier views.
 """
 
+
 @login_required
 def supplier_listing(request):
     suppliers = Supplier.objects.all()
@@ -282,6 +299,7 @@ def supplier_listing(request):
     }
 
     return render(request, 'items/suppliers.html', context)
+
 
 @login_required
 def supplier_detail(request, id):
@@ -296,6 +314,7 @@ def supplier_detail(request, id):
     }
 
     return render(request, 'items/supplier.html', context)
+
 
 @login_required
 def supplier_add(request):
@@ -315,11 +334,11 @@ def supplier_add(request):
             supplier.save()
 
             return redirect(f'/items/suppliers/{supplier.id}')
-
     else:
         form = SupplierForm()
 
     return render(request, 'items/supplier-edit.html', {'form': form})
+
 
 @login_required
 def supplier_edit(request, id):
@@ -350,6 +369,7 @@ def supplier_edit(request, id):
 
     return render(request, 'items/supplier-edit.html', {'form': form, 'obj': supplier})
 
+
 @login_required
 def supplier_delete(request, id):
     if request.method == 'POST':
@@ -364,6 +384,7 @@ def supplier_delete(request, id):
 Categories views.
 """
 
+
 @login_required
 def categories_listing(request):
     categories = Category.objects.all()
@@ -373,6 +394,7 @@ def categories_listing(request):
     }
 
     return render(request, 'items/categories.html', context)
+
 
 @login_required
 def category_detail(request, id):
@@ -387,6 +409,7 @@ def category_detail(request, id):
     }
 
     return render(request, 'items/category.html', context)
+
 
 @login_required
 def category_add(request):
@@ -407,6 +430,7 @@ def category_add(request):
 
     return render(request, 'items/category-edit.html', {'form': form})
 
+
 @login_required
 def category_edit(request, id):
     category = Category.objects.get(pk=id)
@@ -425,6 +449,7 @@ def category_edit(request, id):
         form = CategoryForm(initial={'name': category.name})
 
     return render(request, 'items/category-edit.html', {'form': form, 'obj': category})
+
 
 @login_required
 def category_delete(request, id):

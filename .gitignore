@@ -1,6 +1,11 @@
 __pycache__/
 *~
 Pipfile.lock
-.idea/.gitignore
 password.env
 secretpass
+**/migrations/**
+.idea/dataSources.xml
+.idea/deployment.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
