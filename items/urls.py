@@ -1,41 +1,41 @@
 from django.urls import path
-from items import views
+from items.views import vendor, itemtype, category, supplier, item
 
 urlpatterns = [
     # Categories
-    path('categories', views.categories_listing),
-    path('categories/<int:id>', views.category_detail),
-    path('categories/add', views.category_add),
-    path('categories/<int:id>/edit', views.category_edit),
-    path('categories/<int:id>/delete', views.category_delete),
+    path('categories', category.categories_listing),
+    path('categories/<int:id>', category.category_detail),
+    path('categories/add', category.category_add),
+    path('categories/<int:id>/edit', category.category_edit),
+    path('categories/<int:id>/delete', category.category_delete),
 
     # Item types
-    path('types', views.types_listing),
-    path('types/<int:type_id>', views.type_detail),
-    path('types/add', views.type_add),
-    path('types/<int:id>/edit', views.type_edit),
-    path('types/<int:id>/delete', views.type_delete),
+    path('types', itemtype.types_listing),
+    path('types/<int:type_id>', itemtype.type_detail),
+    path('types/add', itemtype.type_add),
+    path('types/<int:id>/edit', itemtype.type_edit),
+    path('types/<int:id>/delete', itemtype.type_delete),
 
     # Items
-    path('items', views.items_listing),
-    path('items/<int:item_id>', views.item_detail),
-    path('items/add', views.item_add),
-    path('items/<int:id>/edit', views.item_edit),
-    path('items/<int:id>/delete', views.item_delete),
+    path('items', item.items_listing),
+    path('items/<int:item_id>', item.item_detail),
+    path('items/add', item.item_add),
+    path('items/<int:id>/edit', item.item_edit),
+    path('items/<int:id>/delete', item.item_delete),
     #path('<int:member_id>', views.detail),
     #path('search/', views.search),
 
     # Vendors
-    path('vendors', views.vendors_listing),
-    path('vendors/<int:id>', views.vendor_detail),
-    path('vendors/add', views.vendor_add),
-    path('vendors/<int:id>/edit', views.vendor_edit),
-    path('vendors/<int:id>/delete', views.vendor_delete),
+    path('vendors', vendor.vendors_listing),
+    path('vendors/<int:id>', vendor.vendor_detail),
+    path('vendors/add', vendor.vendor_add),
+    path('vendors/<int:id>/edit', vendor.vendor_edit),
+    path('vendors/<int:id>/delete', vendor.vendor_delete),
 
     # Suppliers
-    path('suppliers', views.supplier_listing),
-    path('suppliers/<int:id>', views.supplier_detail),
-    path('suppliers/add', views.supplier_add),
-    path('suppliers/<int:id>/edit', views.supplier_edit),
-    path('suppliers/<int:id>/delete', views.supplier_delete),
+    path('suppliers', supplier.supplier_listing),
+    path('suppliers/<int:id>', supplier.supplier_detail),
+    path('suppliers/add', supplier.supplier_add),
+    path('suppliers/<int:id>/edit', supplier.supplier_edit),
+    path('suppliers/<int:id>/delete', supplier.supplier_delete),
 ]

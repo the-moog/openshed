@@ -166,5 +166,11 @@ LOGGING = {
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
+        'items': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
+            #'filters': ['special']
+        }
     },
 }
