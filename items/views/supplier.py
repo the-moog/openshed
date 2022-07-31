@@ -21,13 +21,13 @@ def supplier_listing(request):
 @login_required
 def supplier_detail(request, id):
     supplier = Supplier.objects.get(pk=id)
-  #  type_count = ItemType.objects.filter(supplier=id).count()
-  #  item_count = Item.objects.select_related('item_type').filter(item_type__supplier=id).count()
+  #  product_count = Product.objects.filter(supplier=id).count()
+  #  item_count = Item.objects.select_related('product').filter(product__supplier=id).count()
 
     context = {
         'supplier': supplier,
-       # 'type_count': type_count,
-        #'item_count': item_count
+        # 'type_count': product_count,
+        # 'item_count': item_count
     }
 
     return render(request, 'items/supplier.html', context)

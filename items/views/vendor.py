@@ -5,7 +5,7 @@ Vendors views.
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from items.models import ItemType, Item, Vendor
+from items.models import Product, Item, Vendor
 from items.forms import VendorForm
 
 
@@ -23,12 +23,12 @@ def vendors_listing(request):
 @login_required
 def vendor_detail(request, id):
     vendor = Vendor.objects.get(pk=id)
-    type_count = ItemType.objects.filter(vendor=id).count()
-    item_count = Item.objects.select_related('item_type').filter(item_type__vendor=id).count()
+    product_count = Product.objects.filter(vendor=id).count()
+    item_count = Item.objects.select_related('product').filter(product__vendor=id).count()
 
     context = {
         'vendor': vendor,
-        'type_count': type_count,
+        'product_count': product_count,
         'item_count': item_count
     }
 

@@ -4,7 +4,7 @@ Categories views.
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from items.models import ItemType, Item, Category
+from items.models import Product, Item, Category
 from items.forms import CategoryForm
 
 
@@ -22,12 +22,12 @@ def categories_listing(request):
 @login_required
 def category_detail(request, id):
     category = Category.objects.get(pk=id)
-    item_type_count = ItemType.objects.filter(category=id).count()
-    item_count = Item.objects.select_related('item_type').filter(item_type__category=id).count()
+    product_count = Product.objects.filter(category=id).count()
+    item_count = Item.objects.select_related('product').filter(product__category=id).count()
 
     context = {
         'category': category,
-        'item_type_count': item_type_count,
+        'product_count': product_count,
         'item_count': item_count
     }
 

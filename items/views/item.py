@@ -3,8 +3,8 @@
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from items.models import ItemType, Item
-from items.forms import TypeForm, ItemForm
+from items.models import Item
+from items.forms import ItemForm
 
 import logging
 
@@ -15,19 +15,19 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def items_listing(request):
-    items = Item.objects.select_related('item_type')  #.select_related('member')
+    items = Item.objects.select_related('product')  #.select_related('member')
 
-    if request.GET.get('vendor') != None:
-        items = items.filter(item_type__vendor=request.GET.get('vendor'))
+    if request.GET.get('vendor') is not None:
+        items = items.filter(product__vendor=request.GET.get('vendor'))
 
-    if request.GET.get('category') != None:
-        items = items.filter(item_type__category=request.GET.get('category'))
+    if request.GET.get('supplier') is not None:
+        items = items.filter(product__vendor=request.GET.get('supplier'))
 
-    if request.GET.get('type') != None:
-        items = items.filter(item_type=request.GET.get('type'))
+    if request.GET.get('category') is not None:
+        items = items.filter(product__category=request.GET.get('category'))
 
-    #if request.GET.get('member') != None:
-        #items = items.filter(member=request.GET.get('member'))
+    if request.GET.get('product') is not None:
+        items = items.filter(product=request.GET.get('product'))
 
     if request.GET.get('decommissioned', 'false') == 'true':
         items = items.exclude(decommissioning_date=None)
@@ -63,8 +63,8 @@ def item_add(request):
             item = Item()
 
             item.item = form.cleaned_data['name']
-            item.item_type = form.cleaned_data['type']
-            #item.member = form.cleaned_data['member']
+            item.product = form.cleaned_data['product']
+            item.supplier = form.cleaned_data['supplier']
             item.serial = form.cleaned_data['serial']
             item.size = form.cleaned_data['size']
             item.commissioning_date = form.cleaned_data['commissioning_date']
@@ -92,8 +92,8 @@ def item_edit(request, id):
 
         if form.is_valid():
             item.item = form.cleaned_data['name']
-            item.item_type = form.cleaned_data['type']
-            #item.member = form.cleaned_data['member']
+            item.product = form.cleaned_data['product']
+            item.supplier = form.cleaned_data['supplier']
             item.serial = form.cleaned_data['serial']
             item.size = form.cleaned_data['size']
             item.commissioning_date = form.cleaned_data['commissioning_date']
@@ -106,13 +106,13 @@ def item_edit(request, id):
 
     else:
         form = ItemForm(initial={'name': item.item,
-                                 'type': item.item_type,
+                                 'product': item.product,
+                                 'supplioer': item.supplier,
                                  'serial': item.serial,
                                  'size': item.size,
                                  'commissioning_date': item.commissioning_date,
                                  'decommissioning_date': item.decommissioning_date,
-                                 'comment': item.comment,
-                                 #'member': item.member
+                                 'comment': item.comment
                                  })
 
     return render(request, 'items/item-edit.html', {'form': form, 'obj': item})

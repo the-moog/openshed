@@ -5,6 +5,7 @@ from address.models import AddressField
 
 # Suppliers.
 class Supplier(models.Model):
+    """Suppliers are the source of vendor products"""
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
     contact = models.CharField(max_length=100, help_text='Contact name', blank=True, default=None)
@@ -22,26 +23,25 @@ class Vendor(models.Model):
 
 # Categories.
 class Category(models.Model):
-    """Category is a tag applied to an itemtype"""
+    """Category is the collective name for similar products"""
     name = models.CharField(max_length=20, unique=True)
 
 
-# Item types.
-class ItemType(models.Model):
-    """An item type is a class of item"""
+# Products
+class Product(models.Model):
+    """Products are made by Vendors and sold by Suppliers"""
     vendor = models.ForeignKey(Vendor, null=True, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, null=True, on_delete=models.PROTECT)
-    type = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20, unique=True)
     description = models.CharField(max_length=30, blank=True, default='')
 
 
 # Items
 class Item(models.Model):
-    """An item is a single instance of a registered item"""
+    """An item is a single instance of a product"""
     item = models.CharField(max_length=20, unique=True)
-    item_type = models.ForeignKey(ItemType, on_delete=models.PROTECT)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
 
-    """Who supplied this item?"""
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
 
     serial = models.CharField(max_length=20, blank=True, default='')
