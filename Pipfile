@@ -10,6 +10,7 @@ django = "*"
 #psycopg2 = "*"
 django-phone-field = "*"
 django-address = "*"
+ordered-set = "*"
 
 [dev-packages]
 
