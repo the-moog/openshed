@@ -1,5 +1,6 @@
 from django import forms
 
+
 class DynamicModelChoiceField(forms.ModelChoiceField):
     """
     :param display_field: The name of the attribute of a queryset object to display in the selection list

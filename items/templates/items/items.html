@@ -14,7 +14,7 @@
       <th scope="col">Item</th>
       <th scope="col">Vendor</th>
       <th scope="col">Supplier</th>
-      <th scope="col">Type</th>
+      <th scope="col">Product</th>
       <th scope="col">Serial</th>
       <th scope="col">Size</th>
       <th scope="col">Commissioning</th>
@@ -26,14 +26,13 @@
 {% for item in items %}
     <tr>
       <td><a href="items/{{item.id}}">{{item.item}}</a></td>
-      <td><a href="vendors/{{item.item_type.vendor.id}}">{{item.item_type.vendor.name}}</a></td>
-      <td><a href="suppliers/{{item.item_type.supplier.id}}">{{item.item_type.supplier.name}}</a></td>
-      <td><a href="types/{{item.item_type.id}}">{{item.item_type.type}}</a></td>
+      <td><a href="vendors/{{item.product.vendor.id}}">{{item.product.vendor.name}}</a></td>
+      <td><a href="suppliers/{{item.supplier.id}}">{{item.supplier.name}}</a></td>
+      <td><a href="products/{{item.product.id}}">{{item.product.name}}</a></td>
       <td>{{item.serial}}</td>
       <td>{{item.size}}</td>
       <td>{{item.commissioning_date}}</td>
       <td>{{item.comment}}</td>
-      <td><a href="/members/members/{{item.member.id}}">{{item.member.first_name}} {{item.member.last_name}}</a></td>
       <td>
         <a class="btn btn-warning" href="items/{{item.id}}/edit">
           <span class="bi-pen"></span>

@@ -2,11 +2,14 @@ __pycache__/
 *~
 Pipfile.lock
 **/migrations/**
-.idea/dataSources/**
-.idea/httpRequests/**
 secretpass
 password.env
+.idea/dataSources/**
+.idea/httpRequests/**
 .idea/workspace.xml
 .idea/deployment.xml
 .idea/dataSources.local.xml
 .idea/dataSources.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
