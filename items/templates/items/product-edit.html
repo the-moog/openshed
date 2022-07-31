@@ -1,0 +1,9 @@
+{% extends 'generic/object_edit.html' %}
+{% load form_helpers %}
+
+{% block form %}
+    {% render_field form.category %}
+    {% render_field form.vendor %}
+    {% render_field form.name %}
+    {% render_field form.description %}
+{% endblock %}
