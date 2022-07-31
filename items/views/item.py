@@ -69,6 +69,7 @@ def item_add(request):
             item.size = form.cleaned_data['size']
             item.commissioning_date = form.cleaned_data['commissioning_date']
             item.comment = form.cleaned_data['comment']
+            item.image = form.cleaned_data['image']
 
             item.save()
 
@@ -88,7 +89,7 @@ def item_edit(request, id):
     item = Item.objects.get(pk=id)
 
     if request.method == 'POST':
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, request.FILES)
 
         if form.is_valid():
             item.item = form.cleaned_data['name']
@@ -99,6 +100,8 @@ def item_edit(request, id):
             item.commissioning_date = form.cleaned_data['commissioning_date']
             item.decommissioning_date = form.cleaned_data['decommissioning_date']
             item.comment = form.cleaned_data['comment']
+            #handle_uploaded_file(request.FILES['image'])
+            item.image = form.cleaned_data['image']
 
             item.save()
 
@@ -107,12 +110,13 @@ def item_edit(request, id):
     else:
         form = ItemForm(initial={'name': item.item,
                                  'product': item.product,
-                                 'supplioer': item.supplier,
+                                 'supplier': item.supplier,
                                  'serial': item.serial,
                                  'size': item.size,
                                  'commissioning_date': item.commissioning_date,
                                  'decommissioning_date': item.decommissioning_date,
-                                 'comment': item.comment
+                                 'comment': item.comment,
+                                 'image': item.image
                                  })
 
     return render(request, 'items/item-edit.html', {'form': form, 'obj': item})

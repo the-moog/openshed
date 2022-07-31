@@ -34,6 +34,7 @@ class ItemForm(forms.Form):
     commissioning_date = forms.DateField(initial=datetime.date.today, required=False)
     decommissioning_date = forms.DateField(required=False)
     comment = forms.CharField(max_length=50, required=False)
+    image = forms.ImageField(allow_empty_file=True)
 
 
 class ProductForm(forms.Form):

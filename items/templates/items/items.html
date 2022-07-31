@@ -29,10 +29,11 @@
       <td><a href="vendors/{{item.product.vendor.id}}">{{item.product.vendor.name}}</a></td>
       <td><a href="suppliers/{{item.supplier.id}}">{{item.supplier.name}}</a></td>
       <td><a href="products/{{item.product.id}}">{{item.product.name}}</a></td>
-      <td>{{item.serial}}</td>
-      <td>{{item.size}}</td>
-      <td>{{item.commissioning_date}}</td>
-      <td>{{item.comment}}</td>
+      <td>{{ item.serial }}</td>
+      <td>{{ item.size }}</td>
+      <td>{{ item.commissioning_date }}</td>
+      <td>{{ item.image }}</td>
+      <td>{{ item.comment }}</td>
       <td>
         <a class="btn btn-warning" href="items/{{item.id}}/edit">
           <span class="bi-pen"></span>

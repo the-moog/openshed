@@ -1,6 +1,10 @@
-from members.models import *
+from django.db import models
 from phone_field import PhoneField
 from address.models import AddressField
+from utilities.base_x import IntBaseX
+from django.core.files.storage import FileSystemStorage
+
+itemfs = FileSystemStorage(location='/media/items')
 
 
 # Suppliers.
@@ -13,6 +17,9 @@ class Supplier(models.Model):
     address = AddressField(blank=True, null=True, unique=True, default=None, help_text='Contact address')
     phone = PhoneField(unique=True, default=None, blank=True, null=True, help_text='Contact phone number')
     email = models.EmailField(unique=True, null=True, default=None)
+
+
+
 
 
 # Vendors.
@@ -50,3 +57,8 @@ class Item(models.Model):
     commissioning_date = models.DateField(null=True)
     decommissioning_date = models.DateField(null=True)
     comment = models.CharField(max_length=50, blank=True, default='')
+    image = models.ImageField(storage=itemfs, blank=True)
+
+    @property
+    def uid(self):
+        return IntBaseX(self.id).as_base(pad_zero=10).upper()

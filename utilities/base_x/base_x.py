@@ -1,14 +1,15 @@
 from ordered_set import OrderedSet
 
 
-# Only letters that are easy to differentiate
-base22_symbol_space = "abcdefghjkmnpqrstuwxyz"
+# A symbol set that uses letters, dropping those that are easy to confuse
+easy_symbol_space = "0123457ABCDEFGHKMNPTUWXY"
 
+# Standard hex to allow basic testing
 base16_symbol_space = "0123456789ABCDEF"
 
 
 class IntBaseX:
-    def __init__(self, value, symbol_set=base22_symbol_space):
+    def __init__(self, value, symbol_set=easy_symbol_space):
         self._value = value
         self._symbol_set = None
         if symbol_set is not None:
