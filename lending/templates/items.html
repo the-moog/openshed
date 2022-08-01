@@ -4,36 +4,66 @@
 {% csrf_token %}
   <script type="text/javascript">
 
-  function reserve(item, reserve=true) {
-      let ret = null;
-      let formData = new FormData();
-      formData.append("reserve_item", item);
-      formData.append("reserve_state", reserve.toString());
-      try {
-          ret = fetch( "/lending/reserve", {
-              method: 'post',
-              headers: {
-                  'Cache-Control': 'no-store',
-              },
-              mode: 'same-origin',
-              body: formData
-          });
-      } catch(err) {
-        console.error(`Error: ${err}`);
-      }
-      return ret;
+  async function reserve(item, reserve=true) {
+    //let ret = new Response();
+    let formData = new FormData();
+    const csrf_token = getCookie('csrftoken');
+    formData.append("csrfmiddlewaretoken", csrf_token);
+    formData.append("reserve_item", item);
+    formData.append("reserve_state", reserve.toString());
+    /*
+    try {
+        ret = await fetch( "/lending/reserve", {
+            method: 'post',
+            headers: {
+                'Cache-Control': 'no-store',
+            },
+            mode: 'same-origin',
+            body: formData
+        });
+    } catch(err) {
+      console.error(`Error: ${err}`);
+    }
+    let json = await ret.json();
+    return Promise.resolve(json)*/
+    const tryReserve = new Request("/lending/reserve", {
+        method: 'post',
+        headers: {
+          'Cache-Control': 'no-store',
+        },
+        mode: 'same-origin',
+        body: formData});
+    let response = await fetch(tryReserve);
+    if (response.status != 200) {
+        throw new Error('Something went wrong');
+    }
+    return response.json();
+/*
+      fetch(tryReserve).then((response) => {
+      if (response.status === 200) {
+        const ret = response.json();
+        return ret;
+      } else {
+        throw new Error('Something went wrong');
+      }}).then((response) => {
+          console.debug(response);
+      }).catch((error) => {
+          console.error(error);
+      });*/
   }
 
-  function bagIt(row, item) {
+  async function bagIt(row, item) {
     //console.log( row, item );
     const button = document.getElementById('bag_'+row);
     const table_row = document.getElementById('row_'+row);
     let basket_count = parseInt(document.getElementById('basket_count').textContent);
     if (button.text==="Bag it") {
-        let response = reserve(item, true);
-        // true = was reserved
+        //const response = reserve(item, true);
+        // true = is now reserved
         // false = somebody got there before you
-        if (response == 'true') {
+        reserve(item, true).then((response) => {
+            console.log(button, row, response)
+        if (response.success === true) {
             table_row.style.backgroundColor = "green";
             button.text = "Bagged";
             basket_count++;
@@ -41,23 +71,27 @@
             table_row.style.backgroundColor = "yellow";
             button.disabled = true;
             button.text = "Not available";
-        }
+        }})
     } else {
-        let response = reserve(item, false);
-        // true = reserved -> free
-        // false = free -> free
-        if (response == 'true') {
+        // Cancel reservation
+        //const response = reserve(item, false);
+        // false = reserved -> free | free -> free
+        // true = Not reserved by me
+        reserve(item, false).then((response) => {
+            console.log(button, row, response)
+        if (response.success === false) {
             table_row.style.backgroundColor = "white";
             button.text = "Bag it";
             basket_count--;
-        }
-
+        }})
     }
     document.getElementById('basket_count').textContent = basket_count.toString()
   }
 
   </script>
-  <h1>{% block title %}<div class="d-flex justify-content-between"><div>Available Items</div><div><label id="basket_count">0</label> items in basket</div></div>{% endblock %}</h1>
+  <h1>{% block title %}
+    <div class="d-flex justify-content-between"><div>Available Items</div>
+    <div><label id="basket_count">0</label> items in basket</div></div>{% endblock %}</h1>
   <table class="table">
     <thead>
       <tr>
@@ -71,7 +105,9 @@
     </thead>
     <tbody>
     {% for item in items %}
-      <tr id="row_{{ forloop.counter }}">
+
+      <tr id="row_{{ forloop.counter }}" style="background-color:
+          {% if item.reserved %}yellow{% else %}white{% endif %}">
         <td><a href="items/{{ item.id }}">{{ item.item }}</a></td>
         <td><a href="vendors/{{ item.product.vendor.id }}">{{ item.product.vendor.name }}</a></td>
         <td><a href="products/{{ item.product.id }}">{{ item.product.name }}</a></td>
@@ -79,7 +115,18 @@
         <td>{{ item.size }}</td>
         <td>{{ item.image }}</td>
         <td>
-          <a class="btn" id="bag_{{ forloop.counter }}" href="#" onclick="bagIt({{ forloop.counter }}, {{ item.id }});">Bag it</a>
+          <a class="btn" id="bag_{{ forloop.counter }}" href="#"
+             onclick="bagIt({{ forloop.counter }}, {{ item.id }});"
+             disabled={% if item.reserved and user.id != item.reserved_by.id %}true{% else %}false{% endif %}>
+            {% if item.reserved %}
+              {%  if user.id != item.reserved_by.id %}
+                Not Available
+              {% else %}
+                Bagged
+              {% endif %}
+            {% else %}
+              Bag it
+            {% endif %}</a>
         </td>
       </tr>
     {% endfor %}

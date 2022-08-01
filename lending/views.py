@@ -2,7 +2,14 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Lending
 from items.models import Item
+from members.models import Member
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
+import json
+import datetime
 
+import logging
+
+logger = logging.getLogger(__name__)
 
 @login_required
 def loans(request):
@@ -15,9 +22,63 @@ def loans(request):
 
     return render(request, 'loans.html', context)
 
+
+@login_required
+def reserve(request):
+
+    if request.method == 'POST':
+        state = request.POST['reserve_state'] == 'true'
+        item = request.POST['reserve_item']
+        users = Member.objects.filter(username=request.user)
+
+        if len(users) != 1:
+            return HttpResponseNotAllowed()
+
+        items = Item.objects.filter(pk=item)
+
+        if len(items) != 1:
+            return HttpResponseBadRequest()
+        user = users[0]
+        item = items[0]
+        reserved = False
+
+        logging.debug(f"{state} {item} {user}")
+
+        # Release a reserved item if timed out
+        if item.reserved and datetime.datetime.utcnow() > item.reserved_until:
+            item.reserved_until = None
+            item.reserved_by = None
+            item.save()
+            item.refresh_from_db()
+
+        if state:
+            # Request to reserve
+            if not item.reserved:
+                item.reserved_until = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+                item.reserved_by = user
+                item.save()
+                reserved = True
+        else:
+            # Request to release
+            if item.reserved and item.reserved_by != user:
+                reserved = True
+            else:
+                item.reserved_until = None
+                item.reserved_by = None
+                item.save()
+
+        return HttpResponse(json.dumps({'success': reserved}), content_type="application/json")
+    return HttpResponseBadRequest()
+
+
 @login_required
 def loan_items(request):
     items = Item.objects.select_related('product')
+
+    users = Member.objects.filter(username=request.user)
+    if len(users) != 1:
+        return HttpResponseNotAllowed()
+    user = users[0]
 
     if request.GET.get('vendor') is not None:
         items = items.filter(product__vendor=request.GET.get('vendor'))
@@ -38,6 +99,7 @@ def loan_items(request):
 
     context = {
         'items': items,
+        'user': user
     }
 
     page = render(request, 'items.html', context)

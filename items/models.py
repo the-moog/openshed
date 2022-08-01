@@ -3,6 +3,8 @@ from phone_field import PhoneField
 from address.models import AddressField
 from utilities.base_x import IntBaseX
 from django.core.files.storage import FileSystemStorage
+from members.models import Member
+import datetime
 
 itemfs = FileSystemStorage(location='/media/items')
 
@@ -59,6 +61,9 @@ class Item(models.Model):
     comment = models.CharField(max_length=50, blank=True, default='')
     image = models.ImageField(storage=itemfs, blank=True)
 
+    reserved_until = models.DateTimeField(null=True)
+    reserved_by = models.ForeignKey(Member, null=True, on_delete=models.PROTECT)
+
     @property
     def uid(self):
         return IntBaseX(self.id).as_base(pad_zero=10).upper()
@@ -66,3 +71,7 @@ class Item(models.Model):
     @property
     def on_loan(self):
         return False
+
+    @property
+    def reserved(self):
+        return self.reserved_until is not None and self.reserved_until > datetime.datetime.utcnow()

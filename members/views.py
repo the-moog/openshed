@@ -10,8 +10,8 @@ from django.http import HttpResponse
 @login_required
 def members_listing(request):
     members = Member.objects.all().order_by('last_name', 'first_name')
-    formatted_members = ["<li>{} {}</li>".format(member.last_name, member.first_name) for member in members]
-    message = """<ul>{}</ul>""".format("\n".join(formatted_members))
+    #formatted_members = ["<li>{} {}</li>".format(member.last_name, member.first_name) for member in members]
+    #message = """<ul>{}</ul>""".format("\n".join(formatted_members))
 
     if request.GET.get('departed', 'false') == 'true':
         members = members.exclude(departure_date=None)
@@ -78,9 +78,10 @@ def member_edit(request, id):
             return redirect(f'/members/members/{member.id}')
 
     else:
-        form = MemberForm(initial={'first_name': member.first_name,
-                                   'last_name': member.last_name,
-                                   'departure_date': member.departure_date})
+        form = MemberForm(initial={ 'username': member.username,
+                                    'first_name': member.first_name,
+                                    'last_name': member.last_name,
+                                    'departure_date': member.departure_date})
 
     return render(request, 'members/member-edit.html', {'form': form, 'obj': member})
 
