@@ -48,6 +48,7 @@ def member_add(request):
 
             member.first_name = form.cleaned_data['first_name']
             member.last_name = form.cleaned_data['last_name']
+            member.username = form.cleaned_data['username']
 
             member.save()
 
@@ -69,6 +70,7 @@ def member_edit(request, id):
         if form.is_valid():
             member.first_name = form.cleaned_data['first_name']
             member.last_name = form.cleaned_data['last_name']
+            member.username = form.cleaned_data['username']
             member.departure_date = form.cleaned_data['departure_date']
 
             member.save()
@@ -100,7 +102,9 @@ def search(request):
     if not query:
         members = Member.objects.all()
     else:
-        members = Member.objects.filter(Q(last_name__icontains=query) | Q(first_name__icontains=query))
+        members = Member.objects.filter(Q(last_name__icontains=query) |
+                                        Q(first_name__icontains=query) |
+                                        Q(username__icontains=query))
 
         if not members.exists():
             message = f"Not found {query}"
