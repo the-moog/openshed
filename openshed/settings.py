@@ -44,11 +44,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'widget_tweaks',
     'utilities',
     'address',
-    'phone_field'
+    'phone_field',
+    'cart'
 ]
+
+CART_SESSION_ID = 'cart'
+
+# Allow passing of the CSRF token in the request header
+CSRF_HEADER_NAME = 'X-CSRFToken'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -73,6 +80,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                #'cart.context_processor.cart_total_amount'
             ],
         },
     },
@@ -141,7 +149,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-STATIC_URL = '/static'
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / '../static'
 
 MEDIA_URL = '/media/'
@@ -169,12 +177,12 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
         'django.core': {
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
             'propagate': False,
         },
         'items': {

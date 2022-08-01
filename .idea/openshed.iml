@@ -14,7 +14,7 @@
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
-    <orderEntry type="jdk" jdkName="3.10 @ Ubuntu-20.04" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="3.9 @ Ubuntu-20.04" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">
@@ -25,7 +25,7 @@
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
     <option name="TEMPLATE_FOLDERS">
       <list>
-        <option value="$MODULE_DIR$/members/templates" />
+        <option value="$MODULE_DIR$/lending/templates" />
       </list>
     </option>
   </component>

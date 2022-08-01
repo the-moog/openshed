@@ -37,6 +37,7 @@
               <a class="dropdown-item" href="/items/vendors">Vendors</a>
               <a class="dropdown-item" href="/items/categories">Categories</a>
               <a class="dropdown-item" href="/items/suppliers">Suppliers</a>
+              <a class="dropdown-item" href="/lending/loans">Equipment Loans</a>
             </div>
           </li>
         </ul>
@@ -57,7 +58,20 @@
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-
+    <script type="text/javascript">
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+        }}}
+        return cookieValue;
+    }
+    </script>
     <div>
         {% block content %}
         {% endblock %}

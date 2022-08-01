@@ -18,6 +18,7 @@ from django.urls import path, include, re_path
 from django.views.generic.base import TemplateView
 from django.views.generic.base import RedirectView
 
+
 favicon_view = RedirectView.as_view(url='/img/favicon.ico', permanent=True)
 
 urlpatterns = [

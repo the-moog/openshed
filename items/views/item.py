@@ -5,12 +5,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Item
 from items.forms import ItemForm
+from cart.cart import Cart
 
 import logging
 
 logger = logging.getLogger(__name__)
-
-
 
 
 @login_required
@@ -34,11 +33,18 @@ def items_listing(request):
     else:
         items = items.filter(decommissioning_date=None)
 
+    #loan_view |= 'loan' in request.POST and request.POST['loan'] == 'true'
+    #loan_view |= 'HTTP_X_LOAN_VIEW' in request.META and request.META['HTTP_X_LOAN_VIEW'] == 'true'
     context = {
-        'items': items
+        'items': items,
+        #'loan_view': loan_view
     }
 
-    return render(request, 'items/items.html', context)
+    #if loan_view:
+    #    page = redirect("/items/items", loan_view=loan_view)
+    #else:
+    page = render(request, 'items/items.html', context)
+    return page
 
 
 @login_required
@@ -131,3 +137,21 @@ def item_delete(request, id):
 
     return render(request, 'items/item-delete.html')
 
+
+@login_required
+def cart_add(request, product_id):
+    item = Item.objects.get(id=product_id)
+    cart = Cart(request)
+    #cart.add(item, item.unit_price, 1)
+    # TODO: implement pricing
+    cart.add(item, 1.23, 1)
+
+@login_required
+def cart_del(request, product_id):
+    item = Item.objects.get(id=product_id)
+    cart = Cart(request)
+    cart.remove(item)
+
+@login_required
+def cart_detail(request):
+    return render(request, 'cart.html', {'cart': Cart(request)})

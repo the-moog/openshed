@@ -1,0 +1,37 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+<div class="float-right noprint">
+   <a class="btn btn-warning" href="{{member.id}}/edit">
+      <span class="bi-pen"></span>
+      Edit
+   </a>
+   <a class="btn btn-danger" href="{{member.id}}/delete">
+      <span class="bi-trash"></span>
+      Delete
+   </a>
+</div>
+<div class="card" style="width: 18rem;">
+  <div class="card-header">
+    <strong>Member</strong>
+  </div>
+  <table class="table table-hover">
+    <tr>
+      <td>Lent By</td>
+      <td>{{loan.lent_by.display_name}}</td>
+    </tr>
+    <tr>
+      <td>Lent To</td>
+      <td>{{loan.lent_to.display_name}}</td>
+    </tr>
+    <tr>
+      <td>Lent On</td>
+      <td>{{loan.out_dt}}</td>
+    </tr>
+    <tr>
+      <td>Return By</td>
+      <td>{{loan.out_dt}}</td>
+    </tr>
+  </table>
+</div>
+{% endblock %}

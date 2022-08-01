@@ -1,19 +1,63 @@
 {% extends 'openshed/base.html' %}
 
 {% block content %}
-<h1>{% block title %}Members{% endblock %}</h1>
+{% csrf_token %}
+<!--<input type="hidden" id="csrf_token" value={{ csrf_token }}>-->
+<div class="float-right noprint">
+   <a id="btn_loan" class="btn btn-primary" href="#">
+      <span class="bi-plus"></span>
+      Add
+   </a>
+<script type="text/javascript">
+    const button = document.getElementById('btn_loan');
+    //const csrf_token = document.getElementById('csrf_token');
+
+
+    const csrftoken = getCookie('csrftoken');
+
+    button.addEventListener('click', async _ => {
+      try {
+        let formData = new FormData();
+        formData.append("csrfmiddlewaretoken", csrftoken);
+        formData.append("loan", true);
+        const response = await fetch( "/lending/items", {
+          method: 'post',
+          //headers: {'X-CSRFToken': csrftoken},
+          headers: {
+              'Cache-Control': 'no-store',
+              'X-loan-view': 'true'
+          },
+          mode: 'same-origin',
+          body: formData
+        });
+        //console.log('Completed!', response);
+        location.href = response.url;
+      } catch(err) {
+        console.error(`Error: ${err}`);
+      }
+    });
+</script>
+
+</div>
+<h1>{% block title %}Equipment loans{% endblock %}</h1>
 <table class="table">
   <thead>
     <tr>
       <th scope="col">Item</th>
       <th scope="col">Lent to</th>
+      <th scope="col">Lent on</th>
+      <th scope="col">Lent by</th>
+      <th scope="col">Return by</th>
     </tr>
   </thead>
   <tbody>
-{% for hire in hires %}
+{% for loan in loans %}
     <tr>
-      <td><a href="lending/{{hire.id}}">{{hire.loan.item}}</a></td>
-      <td><a href="lending/{{hire.id}}">{{hire.lent_to}}</a></td>
+      <td><a href="lending/{{loan.id}}">{{loan.loan.item}}</a></td>
+      <td><a href="lending/{{loan.id}}">{{loan.lent_to}}</a></td>
+      <td><a href="lending/{{loan.id}}">{{loan.out_dt}}</a></td>
+      <td><a href="lending/{{loan.id}}">{{loan.lent_by}}</a></td>
+      <td><a href="lending/{{loan.id}}">{{loan.until_dt}}</a></td>
     </tr>
 {% endfor %}
   </tbody>

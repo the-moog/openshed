@@ -62,3 +62,7 @@ class Item(models.Model):
     @property
     def uid(self):
         return IntBaseX(self.id).as_base(pad_zero=10).upper()
+
+    @property
+    def on_loan(self):
+        return False
