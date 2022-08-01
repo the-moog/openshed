@@ -4,7 +4,9 @@ from address.models import AddressField
 from utilities.base_x import IntBaseX
 from django.core.files.storage import FileSystemStorage
 from members.models import Member
+from items.utils import release_reserved
 import datetime
+
 
 itemfs = FileSystemStorage(location='/media/items')
 
@@ -19,9 +21,6 @@ class Supplier(models.Model):
     address = AddressField(blank=True, null=True, unique=True, default=None, help_text='Contact address')
     phone = PhoneField(unique=True, default=None, blank=True, null=True, help_text='Contact phone number')
     email = models.EmailField(unique=True, null=True, default=None)
-
-
-
 
 
 # Vendors.
@@ -63,6 +62,7 @@ class Item(models.Model):
 
     reserved_until = models.DateTimeField(null=True)
     reserved_by = models.ForeignKey(Member, null=True, on_delete=models.PROTECT)
+    reserved_session = models.CharField(max_length=32, blank=True, default='')
 
     @property
     def uid(self):
@@ -74,4 +74,11 @@ class Item(models.Model):
 
     @property
     def reserved(self):
-        return self.reserved_until is not None and self.reserved_until > datetime.datetime.utcnow()
+        was_reserved = self.reserved_until is not None
+        still_reserved = was_reserved and self.reserved_until > datetime.datetime.utcnow()
+        if was_reserved and not still_reserved:
+            # Release a reserved item if timed out
+            release_reserved(self)
+            still_reserved = False
+        return still_reserved
+

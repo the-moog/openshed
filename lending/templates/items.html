@@ -4,28 +4,13 @@
 {% csrf_token %}
   <script type="text/javascript">
 
-  async function reserve(item, reserve=true) {
-    //let ret = new Response();
+  async function reserve(item) {
     let formData = new FormData();
     const csrf_token = getCookie('csrftoken');
     formData.append("csrfmiddlewaretoken", csrf_token);
     formData.append("reserve_item", item);
-    formData.append("reserve_state", reserve.toString());
-    /*
-    try {
-        ret = await fetch( "/lending/reserve", {
-            method: 'post',
-            headers: {
-                'Cache-Control': 'no-store',
-            },
-            mode: 'same-origin',
-            body: formData
-        });
-    } catch(err) {
-      console.error(`Error: ${err}`);
-    }
-    let json = await ret.json();
-    return Promise.resolve(json)*/
+    //formData.append("reserve_state", reserve.toString());
+
     const tryReserve = new Request("/lending/reserve", {
         method: 'post',
         headers: {
@@ -37,62 +22,78 @@
     if (response.status != 200) {
         throw new Error('Something went wrong');
     }
-    return response.json();
-/*
-      fetch(tryReserve).then((response) => {
-      if (response.status === 200) {
-        const ret = response.json();
-        return ret;
-      } else {
+  }
+
+  async function update_bag(){
+
+    const request = new Request("/items/items/reserved", {
+        method: 'get',
+        headers: {
+          'Cache-Control': 'no-store',
+        },
+        mode: 'same-origin',
+    });
+    let response = await fetch(request);
+    if (response.status != 200) {
         throw new Error('Something went wrong');
-      }}).then((response) => {
-          console.debug(response);
-      }).catch((error) => {
-          console.error(error);
-      });*/
+    }
+    let selected_ids = []
+    let unavailable_ids = []
+
+    await response.json().then((data) => {
+        //console.log(data)
+        reserved_items = JSON.parse(data.reserved_items)
+        //console.log(reserved_items)
+        reserved_items.forEach((item) => {
+          let reserved_by_id = item.fields['reserved_by']
+          let item_id = item['pk']
+          //console.log("reserved: ", reserved_by_id, item_id)
+          if (reserved_by_id != null) {
+              if (reserved_by_id == {{ user.id }}) selected_ids.push(item_id)
+              else unavailable_ids.push(item_id)
+          }
+        })})
+
+    const table = document.getElementById('item_table');
+    for (let i=1; i<table.rows.length; i++) {
+        let row = table.rows[i]
+        //let button = document.getElementById('a#bag_'+i+1+".btn");
+        let cell = row.cells[6]
+        //let table_row = document.getElementById('row_'+i+1);
+
+        //let row_item_id = 0;//parseInt(row.attributes.id.value.toString().splitText("_")[1])
+        let row_item_id = row.attributes.id.value;
+        row_item_id = parseInt(row_item_id.split("_")[1]);
+
+
+        if (selected_ids.includes(row_item_id)) {
+            row.style.backgroundColor = "green";
+            //button.disabled = false;
+            cell.innerText = "Bagged";
+        } else if (unavailable_ids.includes(row_item_id)) {
+            row.style.backgroundColor = "yellow";
+            //button.disabled = true;
+            cell.innerText = "Unavailable";
+        } else {
+            row.style.backgroundColor = "white";
+            //button.disabled = false;
+            cell.innerText = "Bag It";
+        }
+        console.log(i, cell);
+    }
+    document.getElementById('basket_count').textContent = selected_ids.length.toString();
   }
 
   async function bagIt(row, item) {
-    //console.log( row, item );
-    const button = document.getElementById('bag_'+row);
-    const table_row = document.getElementById('row_'+row);
-    let basket_count = parseInt(document.getElementById('basket_count').textContent);
-    if (button.text==="Bag it") {
-        //const response = reserve(item, true);
-        // true = is now reserved
-        // false = somebody got there before you
-        reserve(item, true).then((response) => {
-            console.log(button, row, response)
-        if (response.success === true) {
-            table_row.style.backgroundColor = "green";
-            button.text = "Bagged";
-            basket_count++;
-        } else {
-            table_row.style.backgroundColor = "yellow";
-            button.disabled = true;
-            button.text = "Not available";
-        }})
-    } else {
-        // Cancel reservation
-        //const response = reserve(item, false);
-        // false = reserved -> free | free -> free
-        // true = Not reserved by me
-        reserve(item, false).then((response) => {
-            console.log(button, row, response)
-        if (response.success === false) {
-            table_row.style.backgroundColor = "white";
-            button.text = "Bag it";
-            basket_count--;
-        }})
-    }
-    document.getElementById('basket_count').textContent = basket_count.toString()
+    await reserve(item)
+    await update_bag()
   }
 
   </script>
   <h1>{% block title %}
     <div class="d-flex justify-content-between"><div>Available Items</div>
     <div><label id="basket_count">0</label> items in basket</div></div>{% endblock %}</h1>
-  <table class="table">
+  <table id="item_table" class="table">
     <thead>
       <tr>
         <th scope="col">Item</th>
@@ -101,35 +102,30 @@
         <th scope="col">Serial</th>
         <th scope="col">Size</th>
         <th scope="col"></th>
+        <th scope="col">Goodie Bag</th>
       </tr>
     </thead>
     <tbody>
     {% for item in items %}
-
-      <tr id="row_{{ forloop.counter }}" style="background-color:
-          {% if item.reserved %}yellow{% else %}white{% endif %}">
+      <tr id="rowitem_{{ item.id }}" data-href="#" onclick="window.location='#';bagIt({{ forloop.counter }}, {{ item.id }});">
         <td><a href="items/{{ item.id }}">{{ item.item }}</a></td>
         <td><a href="vendors/{{ item.product.vendor.id }}">{{ item.product.vendor.name }}</a></td>
         <td><a href="products/{{ item.product.id }}">{{ item.product.name }}</a></td>
         <td>{{ item.serial }}</td>
         <td>{{ item.size }}</td>
         <td>{{ item.image }}</td>
-        <td>
-          <a class="btn" id="bag_{{ forloop.counter }}" href="#"
-             onclick="bagIt({{ forloop.counter }}, {{ item.id }});"
-             disabled={% if item.reserved and user.id != item.reserved_by.id %}true{% else %}false{% endif %}>
-            {% if item.reserved %}
-              {%  if user.id != item.reserved_by.id %}
-                Not Available
-              {% else %}
-                Bagged
-              {% endif %}
-            {% else %}
-              Bag it
-            {% endif %}</a>
-        </td>
+        <td></td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
+
+  <script type="text/javascript">
+  jQuery(document).ready(function ($) {
+    update_bag();
+    $(window).on('resize', function() {
+      update_bag();
+    });
+  });
+  </script>
 {% endblock %}

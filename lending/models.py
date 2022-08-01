@@ -2,6 +2,7 @@ from django.db import models
 from items.models import Item
 from members.models import Member
 
+
 # List of items within the loan
 class LentItems(models.Model):
     item = models.ForeignKey(Item, on_delete=models.PROTECT)
@@ -62,3 +63,4 @@ class LoanPayments(models.Model):
     @property
     def total_paid(self):
         return 999
+

@@ -6,6 +6,9 @@ from django.contrib.auth.decorators import login_required
 from items.models import Item
 from items.forms import ItemForm
 from cart.cart import Cart
+from items.utils import get_user_from_request
+from django.http import JsonResponse
+from django.core import serializers
 
 import logging
 
@@ -146,12 +149,34 @@ def cart_add(request, product_id):
     # TODO: implement pricing
     cart.add(item, 1.23, 1)
 
+
 @login_required
 def cart_del(request, product_id):
     item = Item.objects.get(id=product_id)
     cart = Cart(request)
     cart.remove(item)
 
+
 @login_required
 def cart_detail(request):
     return render(request, 'cart.html', {'cart': Cart(request)})
+
+
+@login_required
+def get_reserved(request):
+    user = get_user_from_request(request)
+    try:
+        items = Item.objects.filter(reserved_by=user.id)
+    except Item.DoesNotExist:
+        items = []
+
+    for item in items:
+        if item.reserved_session != request.session.session_key:
+            item.reserved_session = request.session.session_key
+            item.save()
+            item.refresh_from_db()
+
+    items_json = serializers.serialize('json', items)
+
+    return JsonResponse({'reserved_count': items.count(), 'reserved_items': items_json})
+

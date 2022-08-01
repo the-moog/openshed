@@ -5,11 +5,13 @@ from items.models import Item
 from members.models import Member
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
 import json
-import datetime
+from items.utils import reserve, get_user_from_request
+from django.db.models import Q
 
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 @login_required
 def loans(request):
@@ -23,79 +25,35 @@ def loans(request):
     return render(request, 'loans.html', context)
 
 
-@login_required
-def reserve(request):
+def loan_reserve(request):
 
     if request.method == 'POST':
-        state = request.POST['reserve_state'] == 'true'
         item = request.POST['reserve_item']
-        users = Member.objects.filter(username=request.user)
 
-        if len(users) != 1:
+        try:
+            user = get_user_from_request(request)
+        except Member.DoesNotExist:
             return HttpResponseNotAllowed()
 
-        items = Item.objects.filter(pk=item)
+        try:
+            item = Item.objects.get(pk=item)
+        except Item.DoesNotExist:
+            return HttpResponseBadRequest
 
-        if len(items) != 1:
-            return HttpResponseBadRequest()
-        user = users[0]
-        item = items[0]
-        reserved = False
+        logging.debug(f"{item} {user}")
+        reserved = reserve(item, user, request.session)
 
-        logging.debug(f"{state} {item} {user}")
-
-        # Release a reserved item if timed out
-        if item.reserved and datetime.datetime.utcnow() > item.reserved_until:
-            item.reserved_until = None
-            item.reserved_by = None
-            item.save()
-            item.refresh_from_db()
-
-        if state:
-            # Request to reserve
-            if not item.reserved:
-                item.reserved_until = datetime.datetime.utcnow() + datetime.timedelta(hours=1)
-                item.reserved_by = user
-                item.save()
-                reserved = True
-        else:
-            # Request to release
-            if item.reserved and item.reserved_by != user:
-                reserved = True
-            else:
-                item.reserved_until = None
-                item.reserved_by = None
-                item.save()
-
-        return HttpResponse(json.dumps({'success': reserved}), content_type="application/json")
+        return HttpResponse(json.dumps({'reserved': reserved}), content_type="application/json")
     return HttpResponseBadRequest()
 
 
 @login_required
 def loan_items(request):
-    items = Item.objects.select_related('product')
+    """Return a list of items available for loan including those that are reserved by the user"""
+    items = Item.objects.all().select_related('product').order_by('product__category', 'id')
+    user = get_user_from_request(request)
 
-    users = Member.objects.filter(username=request.user)
-    if len(users) != 1:
-        return HttpResponseNotAllowed()
-    user = users[0]
-
-    if request.GET.get('vendor') is not None:
-        items = items.filter(product__vendor=request.GET.get('vendor'))
-
-    if request.GET.get('supplier') is not None:
-        items = items.filter(product__vendor=request.GET.get('supplier'))
-
-    if request.GET.get('category') is not None:
-        items = items.filter(product__category=request.GET.get('category'))
-
-    if request.GET.get('product') is not None:
-        items = items.filter(product=request.GET.get('product'))
-
-    if request.GET.get('decommissioned', 'false') == 'true':
-        items = items.exclude(decommissioning_date=None)
-    else:
-        items = items.filter(decommissioning_date=None)
+    items = items.filter(Q(reserved_by__isnull=True) | Q(reserved_by__id=user.id))
 
     context = {
         'items': items,
@@ -105,8 +63,9 @@ def loan_items(request):
     page = render(request, 'items.html', context)
     return page
 
+
 @login_required
-def detail(request, loan_id):
+def loan_detail(request, loan_id):
     loan = Lending.objects.get(pk=loan_id)
     item_count = Item.objects.filter(item=loan.loan.item, decommissioning_date=None).count()
 
