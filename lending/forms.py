@@ -1,14 +1,14 @@
 from django import forms
+import datetime
 
 
-class LoanForm(forms.Form):
-    lent_by = forms.
-    lent_to = forms.
-    out_dt = forms.
-    until_dt = forms.
-    billed = forms.
-    reason = forms.
+class LoanOutForm(forms.Form):
+    now = datetime.datetime.now()
+    then = now + datetime.timedelta(days=1)
+    until_dt = forms.DateField(label="Return by", required=True, widget=forms.SelectDateWidget(), initial=then)
+    reason = forms.CharField(label="Reason for loan", required=True, widget=forms.Textarea())
 
-    last_name = forms.CharField(max_length=20)
-    first_name = forms.CharField(max_length=20)
-    departure_date = forms.DateField(required=False)
+
+class SignoffForm(forms.Form):
+    pass
+

@@ -5,10 +5,11 @@ from . import views
 urlpatterns = [
     # Members
     path('loans', views.loans),
-    path('items', views.loan_items),
+    path('items', views.loanable_items),
     path('loan/<int:lending_id>', views.loan_detail),
     path('loan/add', views.loan_add),
     path('reserve', views.loan_reserve),
+    path('borrow', views.loan_complete)
     #path('lending/loan', views.lend_items),
     #path('lending/return', views.return_items)
 ]

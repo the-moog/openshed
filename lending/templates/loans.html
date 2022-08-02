@@ -48,16 +48,21 @@
       <th scope="col">Lent on</th>
       <th scope="col">Lent by</th>
       <th scope="col">Return by</th>
+      <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
 {% for loan in loans %}
     <tr>
       <td><a href="lending/{{loan.id}}">{{loan.loan.item}}</a></td>
-      <td><a href="lending/{{loan.id}}">{{loan.lent_to}}</a></td>
+      <td><a href="lending/{{loan.id}}">{{loan.lent_to.firstname}} {{loan.lent_to.last_name}}</a></td>
       <td><a href="lending/{{loan.id}}">{{loan.out_dt}}</a></td>
       <td><a href="lending/{{loan.id}}">{{loan.lent_by}}</a></td>
       <td><a href="lending/{{loan.id}}">{{loan.until_dt}}</a></td>
+      <td>{% if user.id == 1 %}
+        BUTTON
+        {% endif %}
+      </td>
     </tr>
 {% endfor %}
   </tbody>

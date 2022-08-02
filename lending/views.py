@@ -1,12 +1,15 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-from .models import Lending
+from .models import Lending, LentItems
+from .forms import LoanOutForm
 from items.models import Item
 from members.models import Member
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
 import json
 from items.utils import reserve, get_user_from_request
 from django.db.models import Q
+import datetime
+from items.utils import release_reserved, items_on_loan
 
 import logging
 
@@ -16,8 +19,7 @@ logger = logging.getLogger(__name__)
 @login_required
 def loans(request):
     loans = Lending.objects.all()
-    #formatted = [f"<li>{loan.loan.item} {loan.lent_to}</li>" for loan in loans]
-    #message = """<ul>{}</ul>""".format("\n".join(formatted))
+
     context = {
         'loans': loans
     }
@@ -25,8 +27,70 @@ def loans(request):
     return render(request, 'loans.html', context)
 
 
-def loan_reserve(request):
+@login_required
+def loan_complete(request):
+    user = get_user_from_request(request)
 
+    dt_ok = reason_ok = items_ok = True
+
+    if request.method == "POST":
+        form = LoanOutForm(request.POST)
+        ok = form.is_valid()
+        if ok:
+            # Make sure the dt is not in the past
+            dt = form.cleaned_data['until_dt']
+            dt_ok = dt >= datetime.date.today()
+
+            dt = datetime.datetime(dt.year, dt.day, dt.month, 23, 59, 59)
+
+            reason = form.cleaned_data['reason']
+            reason_ok = len(reason) > 20
+
+            try:
+                items = Item.objects.filter(reserved_by=user.id)
+            except Item.DoesNotExist:
+                items = []
+
+            items_ok = len(items) > 0
+
+            if dt_ok and reason_ok and items_ok:
+                loan = Lending()
+                loan.lent_to = user
+                loan.until_dt = dt
+                loan.reason = reason
+                loan.save()
+
+                for item in items:
+                    loan_item = LentItems()
+                    loan_item.loan = loan
+                    loan_item.save()
+                    loan_item.items.add(item)
+                    release_reserved(item)
+                    loan_item.save()
+
+                return loans(request)
+            else:
+                logger.debug("Form go round")
+        else:
+            logger.debug("Form not valid")
+
+    else:
+        logger.debug(f"{request}")
+        form = LoanOutForm()
+
+    context = {'form': form,
+               'errors': {
+                   'until_dt': dt_ok,
+                   'reason': reason_ok,
+                   'items': items_ok
+                    }
+               }
+
+    return render(request, 'loan_complete.html',context)
+
+
+@login_required
+def loan_reserve(request):
     if request.method == 'POST':
         item = request.POST['reserve_item']
 
@@ -48,12 +112,16 @@ def loan_reserve(request):
 
 
 @login_required
-def loan_items(request):
+def loanable_items(request):
     """Return a list of items available for loan including those that are reserved by the user"""
     items = Item.objects.all().select_related('product').order_by('product__category', 'id')
     user = get_user_from_request(request)
 
+    # Include items that are either not reserved at all or reserved by user
     items = items.filter(Q(reserved_by__isnull=True) | Q(reserved_by__id=user.id))
+
+    # Exclude items that are already on loan
+    items = items.exclude(lentitems__items__in=items)
 
     context = {
         'items': items,

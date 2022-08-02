@@ -2,6 +2,7 @@ import datetime
 from members.models import Member
 
 
+
 def get_user_from_request(request):
     user = Member.objects.get(username=request.user)
     return user
@@ -35,3 +36,14 @@ def reserve(item, user, session):
             ret = False
     return ret
 
+
+def item_on_loan(item):
+    from lending.models import LentItems
+    return LentItems.objects.filter(item=item).exclude(item__lentitems__return_dt__isnull=False).count > 0
+
+
+def items_on_loan():
+    from lending.models import LentItems
+    lent_items = LentItems.objects.filter(return_dt__isnull=True)
+    for item in lent_items:
+        yield item.item

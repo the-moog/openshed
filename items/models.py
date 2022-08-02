@@ -48,13 +48,12 @@ class Product(models.Model):
 class Item(models.Model):
     """An item is a single instance of a product"""
     item = models.CharField(max_length=20, unique=True)
-    product = models.ForeignKey(Product, on_delete=models.PROTECT)
 
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
 
     serial = models.CharField(max_length=20, blank=True, default='')
     size = models.CharField(max_length=5, blank=True, default='')
-
     commissioning_date = models.DateField(null=True)
     decommissioning_date = models.DateField(null=True)
     comment = models.CharField(max_length=50, blank=True, default='')
