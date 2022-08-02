@@ -31,6 +31,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -121,7 +122,9 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS = []
+
+x=[
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -159,6 +162,8 @@ MEDIA_ROOT = BASE_DIR / '../media'
 #Django 3.2 Migration
 #see https://dev.to/rubyflewtoo/upgrading-to-django-3-2-and-fixing-defaultautofield-warnings-518n
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+AUTH_USER_MODEL = "members.Member"
 
 GOOGLE_API_KEY = 'AIzaSyD3xLJkVWir3ZzTjI_WPJygD3ilQoDAZA4'
 

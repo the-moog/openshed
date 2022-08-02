@@ -1,8 +1,17 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import Member
 
 
-class MemberForm(forms.Form):
-    username = forms.CharField(max_length=20)
-    last_name = forms.CharField(max_length=20)
-    first_name = forms.CharField(max_length=20)
-    departure_date = forms.DateField(required=False)
+class MemberForm(UserCreationForm):
+
+    class Meta:
+        model = Member
+        fields = ("username", "first_name", "last_name", "email")
+
+
+class MemberEditForm(UserChangeForm):
+
+    class Meta:
+        model = Member
+        fields = ("username", "first_name", "last_name", "email", "departure_date")

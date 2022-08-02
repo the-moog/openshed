@@ -1,11 +1,10 @@
 import datetime
 from members.models import Member
+from django.contrib.auth import get_user
 
-
-
+# TODO: Deprecate this function
 def get_user_from_request(request):
-    user = Member.objects.get(username=request.user)
-    return user
+    return get_user(request)
 
 
 def release_reserved(item):

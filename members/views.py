@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from .models import Member
 from .forms import MemberForm
-from items.models import Item
+
 from django.http import HttpResponse
 
 
@@ -28,7 +28,9 @@ def members_listing(request):
 @login_required
 def detail(request, member_id):
     member = Member.objects.get(pk=member_id)
-    item_count = Item.objects.filter(member=member_id, decommissioning_date=None).count()
+
+    # TODO: count items on loan
+    item_count = 0# Item.objects.filter(member=member_id, decommissioning_date=None).count()
 
     context = {
         'member': member,
