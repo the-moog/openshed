@@ -1,5 +1,6 @@
 from django.db import models
-from phone_field import PhoneField
+from phone_field import PhoneField as OldPhoneField
+from phone_field import PhoneNumber
 from address.models import AddressField
 from utilities.base_x import IntBaseX
 from django.core.files.storage import FileSystemStorage
@@ -11,16 +12,27 @@ import datetime
 itemfs = FileSystemStorage(location='/media/items')
 
 
+class PhoneField(OldPhoneField):
+    # see GitHub
+    def get_prep_value(self, value):
+        if not value:
+            # return ''
+            return None
+
+        if not isinstance(value, PhoneNumber):
+            value = PhoneNumber(value)
+        return value.cleaned
+
+
 # Suppliers.
 class Supplier(models.Model):
     """Suppliers are the source of vendor products"""
-    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100, unique=True)
-    contact = models.CharField(max_length=100, help_text='Contact name', blank=True, default=None)
-    url = models.URLField(blank=True, null=True, unique=True, default=None, help_text='Website')
-    address = AddressField(blank=True, null=True, unique=True, default=None, help_text='Contact address')
-    phone = PhoneField(unique=True, default=None, blank=True, null=True, help_text='Contact phone number')
-    email = models.EmailField(unique=True, null=True, default=None)
+    contact = models.CharField(max_length=100, null=True, blank=True, default=None, help_text='Contact name')
+    url = models.URLField(null=True, unique=True, default=None, help_text='Website')
+    address = AddressField(null=True, unique=True, default=None, help_text='Contact address')
+    phone = PhoneField(null=True, unique=True, default=None, help_text='Contact phone number')
+    email = models.EmailField(null=True, unique=True, default=None)
 
 
 # Vendors.
@@ -41,7 +53,7 @@ class Product(models.Model):
     vendor = models.ForeignKey(Vendor, null=True, on_delete=models.PROTECT)
     category = models.ForeignKey(Category, null=True, on_delete=models.PROTECT)
     name = models.CharField(max_length=20, unique=True)
-    description = models.CharField(max_length=30, blank=True, default='')
+    description = models.CharField(max_length=100, blank=True, default='')
 
 
 # Items
