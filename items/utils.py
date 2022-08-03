@@ -2,6 +2,7 @@ import datetime
 from members.models import Member
 from django.contrib.auth import get_user
 
+
 # TODO: Deprecate this function
 def get_user_from_request(request):
     return get_user(request)
