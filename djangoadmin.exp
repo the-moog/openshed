@@ -1,0 +1,7 @@
+#!/usr/bin/expect
+spawn ./manage.py changepassword admin
+expect "Password: "
+send -- "1234\r"
+expect "Password (again): "
+send -- "1234\r"
+expect eof
