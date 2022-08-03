@@ -147,7 +147,7 @@ def loan_detail(request, loan_id):
 
 
 @login_required
-def loan_add(request):
+def loan_confirm(request):
     if request.method == 'POST':
         form = LoanForm(request.POST)
 
