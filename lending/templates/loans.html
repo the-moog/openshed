@@ -60,7 +60,10 @@
       <td><a href="lending/{{loan.id}}">{{loan.lent_by}}</a></td>
       <td><a href="lending/{{loan.id}}">{{loan.until_dt}}</a></td>
       <td>{% if user.id == 1 %}
-        BUTTON
+        <a id="btn_confirm" class="btn btn-secondary" href="loan/{{loan.id}}/confirm">
+        <span class="bi-card-checklist"></span>
+        Deliver Items
+        </a>
         {% endif %}
       </td>
     </tr>

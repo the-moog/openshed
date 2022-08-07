@@ -4,7 +4,19 @@ from items.models import Vendor
 from items.models import Supplier
 from items.models import Product
 from items.models import Item
+from lending.models import Lending
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 import random
+
+new_group, created = Group.objects.get_or_create(name='CanLend')
+ct = ContentType.objects.get_for_model(Lending)
+
+# Now what - Say I want to add 'Can add project' permission to new_group?
+permission = Permission.objects.create(codename='CanLend',
+                                   name='Can Sign Off Loans',
+                                   content_type=ct)
+new_group.permissions.add(permission)
 
 categories = ["BCD", "Regulator"]
 

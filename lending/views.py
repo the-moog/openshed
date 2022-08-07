@@ -1,7 +1,7 @@
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required, permission_required
 from .models import Lending, LentItems
-from .forms import LoanOutForm
+from .forms import LoanOutForm, LoanSignOffForm
 from items.models import Item
 from members.models import Member
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
@@ -9,7 +9,7 @@ import json
 from items.utils import reserve, get_user_from_request
 from django.db.models import Q
 import datetime
-from items.utils import release_reserved, items_on_loan
+from items.utils import release_reserved
 
 import logging
 
@@ -86,7 +86,7 @@ def loan_complete(request):
                     }
                }
 
-    return render(request, 'loan_complete.html',context)
+    return render(request, 'loan_complete.html', context)
 
 
 @login_required
@@ -146,23 +146,31 @@ def loan_detail(request, loan_id):
     return render(request, 'loan.html', context)
 
 
+@permission_required("CanLend")
 @login_required
-def loan_confirm(request):
+def loan_confirm(request, lending_id):
+    loan = Lending.objects.get(id=lending_id)
+    context = {
+        'hire_to': loan.lent_to,
+        'from_dt': loan.out_dt,
+        'to_date': loan.until_dt,
+        'reason': loan.reason,
+        'lending_id': loan.id,
+        'lender': get_user_from_request(request)
+    }
     if request.method == 'POST':
-        form = LoanForm(request.POST)
-
+        form = LoanSignOffForm(request.POST)
         if form.is_valid():
-            member = Member()
+            assert form.cleaned_data['lending_id'] == loan.id
+            loan.reason = form.cleaned_data['reason']
+            loan.until_dt = form.cleaned_data['until_dt']
+            loan.out_dt = form.cleaned_data['out_dt']
+            loan.lent_by = context.lender
+            loan.save()
 
-            member.first_name = form.cleaned_data['first_name']
-            member.last_name = form.cleaned_data['last_name']
-
-            member.save()
-
-            return redirect(f'/members/members/{member.id}')
-
+            return redirect(f'lending')
     else:
-        form = MemberForm()
+        form = LoanSignOffForm(loan_confirm)
 
-    return render(request, 'members/member-edit.html', {'form': form})
+    return render(request, 'loan_confirm.html', {'form': form, 'context': context})
 

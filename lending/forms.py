@@ -9,6 +9,10 @@ class LoanOutForm(forms.Form):
     reason = forms.CharField(label="Reason for loan", required=True, widget=forms.Textarea())
 
 
-class SignoffForm(forms.Form):
-    pass
+class LoanSignOffForm(forms.Form):
+    hire_to = forms.CharField(label="Loaned to", disabled=True)
+    from_dt = forms.DateTimeField(label="Loan from", required=True, widget=forms.SplitDateTimeWidget())
+    to_date = forms.DateField(label="Return by", required=True, widget=forms.SelectDateWidget())
+    reason = forms.CharField(label="Reason for loan", required=True, widget=forms.Textarea())
+
 

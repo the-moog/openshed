@@ -14,6 +14,7 @@ ordered-set = "*"
 django-cart = { git = "https://github.com/bmentges/django-cart"}
 pillow = "*"
 django-extensions = "*"
+django-jsignature3 = "*"
 
 [dev-packages]
 
