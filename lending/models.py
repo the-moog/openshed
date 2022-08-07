@@ -38,7 +38,7 @@ class Lending(models.Model):
 # List of items within the loan
 class LentItems(models.Model):
     loan = models.ForeignKey(Lending, on_delete=models.PROTECT)
-    items = models.ManyToManyField(Item)
+    item = models.ForeignKey(Item, on_delete=models.PROTECT)
     return_dt = models.DateField(default=None, null=True)
     returned_by = models.ForeignKey(Member, on_delete=models.PROTECT, null=True, default=None)
 

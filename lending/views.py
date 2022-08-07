@@ -39,9 +39,11 @@ def loan_complete(request):
         if ok:
             # Make sure the dt is not in the past
             dt = form.cleaned_data['until_dt']
+
+            # Less than one day loans are meaningless
             dt_ok = dt >= datetime.date.today()
 
-            dt = datetime.datetime(dt.year, dt.day, dt.month, 23, 59, 59)
+            dt = datetime.datetime(dt.year, dt.month, dt.day, 23, 59, 59)
 
             reason = form.cleaned_data['reason']
             reason_ok = len(reason) > 20
@@ -63,11 +65,9 @@ def loan_complete(request):
                 for item in items:
                     loan_item = LentItems()
                     loan_item.loan = loan
-                    loan_item.save()
-                    loan_item.items.add(item)
+                    loan_item.item = item
                     release_reserved(item)
                     loan_item.save()
-
                 return loans(request)
             else:
                 logger.debug("Form go round")
@@ -114,14 +114,17 @@ def loan_reserve(request):
 @login_required
 def loanable_items(request):
     """Return a list of items available for loan including those that are reserved by the user"""
-    items = Item.objects.all().select_related('product').order_by('product__category', 'id')
     user = get_user_from_request(request)
+    items = Item.objects.filter(Q(reserved_by__isnull=True) | Q(reserved_by__id=user.id)).select_related('product').order_by('product__category', 'id')
+
 
     # Include items that are either not reserved at all or reserved by user
-    items = items.filter(Q(reserved_by__isnull=True) | Q(reserved_by__id=user.id))
+    #items = items.filter(Q(reserved_by__isnull=True) | Q(reserved_by__id=user.id))
 
     # Exclude items that are already on loan
-    items = items.exclude(lentitems__items__in=items)
+    lent_items = LentItems.objects.filter(return_dt__isnull=True).values_list('item')
+    if len(lent_items):
+        items = items.exclude(item__in=lent_items)
 
     context = {
         'items': items,
@@ -146,31 +149,35 @@ def loan_detail(request, loan_id):
     return render(request, 'loan.html', context)
 
 
-@permission_required("CanLend")
+#@permission_required("CanLend")
 @login_required
 def loan_confirm(request, lending_id):
-    loan = Lending.objects.get(id=lending_id)
+    loan = Lending.objects.get(pk=lending_id)
+    items = LentItems.objects.filter(loan=loan)
     context = {
-        'hire_to': loan.lent_to,
-        'from_dt': loan.out_dt,
-        'to_date': loan.until_dt,
+        'lent_to': loan.lent_to,
+        'until_dt': loan.until_dt,
         'reason': loan.reason,
         'lending_id': loan.id,
-        'lender': get_user_from_request(request)
+        'lender': get_user_from_request(request),
+        'items': [i.item for i in items]
     }
     if request.method == 'POST':
         form = LoanSignOffForm(request.POST)
         if form.is_valid():
-            assert form.cleaned_data['lending_id'] == loan.id
+            assert lending_id == loan.id
             loan.reason = form.cleaned_data['reason']
             loan.until_dt = form.cleaned_data['until_dt']
-            loan.out_dt = form.cleaned_data['out_dt']
-            loan.lent_by = context.lender
+            loan.out_dt = datetime.datetime.utcnow()
+            loan.lent_by = get_user_from_request(request)
             loan.save()
-
-            return redirect(f'lending')
+            logger.info("Form complete")
+            return loans(request)
+        else:
+            logger.error("Form invalid")
     else:
-        form = LoanSignOffForm(loan_confirm)
+        logger.info("New form")
+        form = LoanSignOffForm(initial=context)
 
     return render(request, 'loan_confirm.html', {'form': form, 'context': context})
 

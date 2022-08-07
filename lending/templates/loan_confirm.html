@@ -2,13 +2,35 @@
 {% load form_helpers %}
 
 {% block content %}
-  <form action="/loan/{{ lending_id }}/confirm" method="post">
+  <form action="confirm" method="post" xmlns="http://www.w3.org/1999/html">
     {% csrf_token %}
-  <h3>Loan Details</h3>
+  <h3>Loan Details (ref #{{ context.lending_id }})</h3>
 
-  {% render_field form.from_dt %}
-  {% render_field form.to_date %}
-  {% render_field form.hire_ti %}
+  <strong>This is a loan of the following items to:</strong> <strong style="color:green">{{ context.lent_to }}</strong>
+  <div class="tabular">
+  <table>
+  <thead>
+    <tr>
+      <td>ID</td>
+      <td>Serial Num</td>
+      <td>Description</td>
+      <td>Photo</td>
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in context.items %}
+    <tr>
+    <td>{{ item.id }}</td>
+    <td>{{ item.serial }}</td>
+    <td>{{ item.product.name}} {{ item.product.description }}</td>
+    <td>{{ item.size }}</td>
+    <td>{{ item.image }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  </table>
+  </div>
+  {% render_field form.until_dt %}
   {% render_field form.reason %}
 
   <br>
@@ -16,14 +38,15 @@
     person borrowing the items and that all the items have been handed out.<br>
   You have informed the person that the following conditions exist...<br>
 
-  The receiver of the items will:<br>
+  The receiver of the items understands that they will:<br>
   <ul>
     <li>Cover the cost of replacement of items not returned</li>
-    <li>Will take reasonable care of the items and inform the Club Equipment Officer (or their nominee) of any loss or damage to the items on loan</li>
-    <li>Will inform the Club Equipment Officer (or their nominee) of any equipment not suitable for service and not use such items for diving</li>
-    <li>Must inform the Club Equipment Officer (or their nominee) as soon as possible if they are unable to return the items at the agreed time</li>
+    <li>Take reasonable care of the items and inform the Club Equipment Officer (or their nominee) of any loss or damage to the items on loan</li>
+    <li>Inform the Club Equipment Officer (or their nominee) of any equipment not suitable for service and not use such items for diving</li>
+    <li>Inform the Club Equipment Officer (or their nominee) as soon as possible if they are unable to return the items at the agreed time</li>
+    <li>Make payment within 21 days after the above end date</li>
   </ul>
-  <div>I, {{ lender }} have done the above</div>
-  <input class="btn btn-success btn-sm" type="submit" value="Submit Request">
+  <div>I, {{ context.lender.display_name }} have verified and completed the above</div>
+  <input class="btn btn-success btn-sm" type="submit" value="Complete Request">
   </form>
 {% endblock %}
