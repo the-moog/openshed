@@ -1,0 +1,23 @@
+{% extends 'openshed/base.html' %}
+{% load form_helpers %}
+
+{% block content %}
+  <form action="" method="post">
+    {% csrf_token %}
+  <div><h4>We need a couple more details</h4></div>
+  <hr>
+  <div>Let us know when you plan have all the items returned</div>
+  {% render_field form.until_dt %}
+  {% if not errors.until_dt %}
+    <div style="color:red">You must choose a date from today onwards, today is <b>{%  now "F j Y"  %}</b></div>
+  {% endif %}
+  <br>
+  <div>Explain why you need to borrow the kit and where it will be taken (min 20 characters)</div>
+    {% if not errors.reason_ok %}
+      <div style="color:red"><b>Too short. Please supply more information</b></div>
+    {% endif %}
+  {% render_field form.reason %}
+
+  <input class="btn btn-success btn-sm" type="submit" value="Submit Request">
+  </form>
+{% endblock %}
