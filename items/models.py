@@ -107,3 +107,6 @@ class Item(models.Model):
             still_reserved = False
         return still_reserved
 
+    @property
+    def last_service(self):
+        return datetime.datetime.utcnow()

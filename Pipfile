@@ -15,6 +15,7 @@ django-cart = { git = "https://github.com/bmentges/django-cart"}
 pillow = "*"
 django-extensions = "*"
 django-jsignature = "*"
+django-timedeltafield = { git = "https://github.com/alexsilva/django-timedeltafield"}
 
 [dev-packages]
 

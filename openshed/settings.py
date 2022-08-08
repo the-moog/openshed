@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'members.apps.MembersConfig',
     'items.apps.ItemsConfig',
     'lending.apps.LendingConfig',
+    'service_history.apps.ServiceHistoryConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
