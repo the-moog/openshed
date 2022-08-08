@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Lending, LentItems
 from .forms import LoanOutForm, LoanSignOffForm
@@ -134,14 +134,15 @@ def loanable_items(request):
 
 
 @login_required
-def loan_detail(request, loan_id):
-    loan = Lending.objects.get(pk=loan_id)
-    item_count = Item.objects.filter(item=loan.loan.item, decommissioning_date=None).count()
+def loan_detail(request, id):
+    loan = Lending.objects.get(pk=id)
+    items = LentItems.objects.filter(loan=loan)
 
     context = {
-        'member': loan,
-        'item_count': item_count,
-        'loan_button': "btn_loan"
+        'loan': loan,
+        'item_count': items.count(),
+        'items': items,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'loan.html', context)
