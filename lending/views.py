@@ -10,6 +10,7 @@ from items.utils import reserve, get_user_from_request
 from django.db.models import Q
 import datetime
 from items.utils import release_reserved
+from openshed.jsignature.utils import draw_signature
 
 import logging
 
@@ -169,6 +170,8 @@ def loan_confirm(request, lending_id):
             loan.reason = form.cleaned_data['reason']
             loan.until_dt = form.cleaned_data['until_dt']
             loan.out_dt = datetime.datetime.utcnow()
+            signature = form.cleaned_data.get('signature')
+            loan.signature = draw_signature(signature, as_file=True)
             loan.lent_by = get_user_from_request(request)
             loan.save()
             logger.info("Form complete")

@@ -7,8 +7,8 @@
   <h3>Loan Details (ref #{{ context.lending_id }})</h3>
 
   <strong>This is a loan of the following items to:</strong> <strong style="color:green">{{ context.lent_to }}</strong>
-  <div class="tabular">
-  <table>
+  <div>
+  <table class="table">
   <thead>
     <tr>
       <td>ID</td>
@@ -22,7 +22,7 @@
     <tr>
     <td>{{ item.id }}</td>
     <td>{{ item.serial }}</td>
-    <td>{{ item.product.name}} {{ item.product.description }}</td>
+    <td>{{ item.product.name}} | {{ item.product.description }}</td>
     <td>{{ item.size }}</td>
     <td>{{ item.image }}</td>
     </tr>
@@ -30,8 +30,12 @@
   </tbody>
   </table>
   </div>
-  {% render_field form.until_dt %}
+    <span class="pull-right">{% render_field form.until_dt %}</span>
   {% render_field form.reason %}
+
+  {% render_field form.signature %}
+
+  <button style="display:block;width:120px; height:30px;" onclick="document.getElementById('jsignature-button').click()">Clear Signature</button>
 
   <br>
   NOTE:  In completing this form you are assuring the club that the correct items have been handed to the

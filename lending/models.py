@@ -11,6 +11,11 @@ class Lending(models.Model):
     until_dt = models.DateField(blank=False)
     billed = models.DecimalField(max_digits=6, decimal_places=2, default=None, null=True)
     reason = models.TextField(blank=False)
+    signature = models.ImageField(default=None, null=True, upload_to="signatures")
+
+    @property
+    def active(self):
+        return self.out_dt is not None and self.billed is None
 
     @property
     def cost_estimate(self):
@@ -33,6 +38,9 @@ class Lending(models.Model):
     @property
     def outstanding(self):
         return 2.34
+
+    def __str__(self):
+        return self.lent_to.display_name() + ": " + str(self.signature)
 
 
 # List of items within the loan

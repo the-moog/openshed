@@ -1,5 +1,8 @@
 
+# MP = manage.py
 MP := ./manage.py
+
+# MM = manage.py makemigrations
 MM := $(MP) makemigrations
 PASSFILE := password.env
 PASS := PGPASSWORD=1234
@@ -15,6 +18,7 @@ all: db
 	$(MP) createsuperuser --username admin --no-input --email nobody@nowhere.com
 	./djangoadmin.exp
 	$(MP) shell -c 'exec(open("utilities/populate_dummy_data.py").read())'
+	$(MP) collectstatic
 
 .PHONY: db
 db:
