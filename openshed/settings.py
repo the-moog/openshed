@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'utilities',
     'address',
     'phone_field',
-    'cart'
+    'cart',
+    'openshed.jsignature',
 ]
 
 CART_SESSION_ID = 'cart'
@@ -81,6 +82,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
                 #'cart.context_processor.cart_total_amount'
             ],
         },
@@ -124,20 +126,10 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = []
 
-x=[
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+x = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'}]
 
 
 # Internationalization
@@ -149,6 +141,10 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = False  # Store datetimes in UTC
 
+# JSignature - We will provide our own button to match form style
+# <input type='button' value='{{ reset_btn_text }}' class="btn">
+#JSIGNATURE_RESET_BUTTON = False
+JSIGNATURE_BUTTON_CSS_CLASS = 'btn btn-lg btn-dark'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
