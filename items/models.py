@@ -56,6 +56,12 @@ class Product(models.Model):
     name = models.CharField(max_length=20, unique=True)
     description = models.CharField(max_length=100, blank=True, default='')
 
+    def __str__(self):
+        return self.long_name()
+
+    def long_name(self):
+        return f"({self.category.name}) {self.name} {self.description} by {self.vendor.name}"
+
 
 # Items
 class Item(models.Model):

@@ -5,11 +5,12 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Item
 from items.forms import ItemForm
-from cart.cart import Cart
 from items.utils import get_user_from_request
 from django.http import JsonResponse
 from django.core import serializers
-
+from items.utils import reserve
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 
 import logging
 
@@ -65,7 +66,7 @@ def item_detail(request, item_id):
 def item_add(request):
     logger.debug("item_add")
     if request.method == 'POST':
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, request.FILES)
         logger.debug("POST")
         if form.is_valid():
             logger.debug("Adding")
@@ -78,8 +79,11 @@ def item_add(request):
             item.size = form.cleaned_data['size']
             item.commissioning_date = form.cleaned_data['commissioning_date']
             item.comment = form.cleaned_data['comment']
-            item.image = form.cleaned_data['image']
-
+            image = request.FILES['image'].read()
+            img_temp = NamedTemporaryFile(delete=True)
+            img_temp.write(image)
+            img_temp.seek(0)
+            item.image.save(f"image_{item.id}.jpg", File(img_temp), save=True)
             item.save()
 
             return redirect(f'/items/items/{item.id}')
@@ -109,9 +113,11 @@ def item_edit(request, id):
             item.commissioning_date = form.cleaned_data['commissioning_date']
             item.decommissioning_date = form.cleaned_data['decommissioning_date']
             item.comment = form.cleaned_data['comment']
-            #handle_uploaded_file(request.FILES['image'])
-            item.image = form.cleaned_data['image']
-
+            image = request.FILES['image'].read()
+            img_temp = NamedTemporaryFile(delete=True)
+            img_temp.write(image)
+            img_temp.seek(0)
+            item.image.save(f"image_{item.id}.jpg", File(img_temp), save=True)
             item.save()
 
             return redirect(f'/items/items/{item.id}')
@@ -142,24 +148,9 @@ def item_delete(request, id):
 
 
 @login_required
-def cart_add(request, product_id):
-    item = Item.objects.get(id=product_id)
-    cart = Cart(request)
-    #cart.add(item, item.unit_price, 1)
-    # TODO: implement pricing
-    cart.add(item, 1.23, 1)
-
-
-@login_required
-def cart_del(request, product_id):
-    item = Item.objects.get(id=product_id)
-    cart = Cart(request)
-    cart.remove(item)
-
-
-@login_required
-def cart_detail(request):
-    return render(request, 'cart.html', {'cart': Cart(request)})
+def cart_add(request, id):
+    item = Item.objects.get(id=id)
+    reserve(item, get_user_from_request(request), request.session)
 
 
 @login_required

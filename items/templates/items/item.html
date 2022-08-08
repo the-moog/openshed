@@ -14,9 +14,14 @@
    </a>
 </div>
   {%  endif %}
-<div class="card" style="width: 18rem;">
+<div class="card" style="width: 25rem;">
   <div class="card-header">
-    <strong>Item</strong>
+    <strong>Item
+      <div class="float-right noprint">{% if item.on_loan %}(ON LOAN){% else %}
+        {% if not item.reserved %}<a class="btn btn-secondary" href="{{item.id}}/cart_add">
+      <span class="bi-bag-plus"></span>
+      BORROW
+      </a>{% else %}(RESERVED){% endif %}{% endif %}</div></strong>
   </div>
   <table class="table table-hover">
     <tr>
