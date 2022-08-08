@@ -1,6 +1,8 @@
 {% extends 'openshed/base.html' %}
+{% load form_helpers %}
 
 {% block content %}
+  {% if is_manager %}
 <div class="float-right noprint">
    <a class="btn btn-warning" href="{{item.id}}/edit">
       <span class="bi-pen"></span>
@@ -11,6 +13,7 @@
       Delete
    </a>
 </div>
+  {%  endif %}
 <div class="card" style="width: 18rem;">
   <div class="card-header">
     <strong>Item</strong>
@@ -45,8 +48,7 @@
       <td>{{item.comment}}</td>
     </tr>
     <tr>
-      <td>Image</td>
-      <td>{{item.image}}</td>
+      <td>{% render_item_image item.image thumbnail=False %}</td>
     </tr>
   </table>
 </div>

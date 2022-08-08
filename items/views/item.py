@@ -10,6 +10,7 @@ from items.utils import get_user_from_request
 from django.http import JsonResponse
 from django.core import serializers
 
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -36,11 +37,9 @@ def items_listing(request):
     else:
         items = items.filter(decommissioning_date=None)
 
-    #loan_view |= 'loan' in request.POST and request.POST['loan'] == 'true'
-    #loan_view |= 'HTTP_X_LOAN_VIEW' in request.META and request.META['HTTP_X_LOAN_VIEW'] == 'true'
     context = {
         'items': items,
-        #'loan_view': loan_view
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     #if loan_view:
@@ -55,7 +54,8 @@ def item_detail(request, item_id):
     item = Item.objects.get(pk=item_id)
 
     context = {
-        'item': item
+        'item': item,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/item.html', context)

@@ -1,7 +1,9 @@
 {% extends 'openshed/base.html' %}
+{% load form_helpers %}
 
 
 {% block content %}
+    {% if is_manager %}
 <div class="float-right noprint">
    <a class="btn btn-warning" href="{{vendor.id}}/edit">
       <span class="bi-pen"></span>
@@ -12,6 +14,7 @@
       Delete
    </a>
 </div>
+  {% endif %}
 <div class="card" style="width: 18rem;">
   <div class="card-header">
     <strong>Product</strong>
@@ -31,7 +34,9 @@
     </tr>
   </table>
 </div>
+    {% if is_manager %}
   <div class="float-right noprint">   <a class="btn btn-secondary" href="add">
   <span class="bi-plus"></span>Create</a>
+    {% endif %}
 </div>
 {% endblock %}

@@ -9,7 +9,8 @@ from items.utils import release_reserved
 import datetime
 
 
-itemfs = FileSystemStorage(location='/media/items')
+
+itemfs = FileSystemStorage(location='media/items')
 
 
 class PhoneField(OldPhoneField):
@@ -61,6 +62,8 @@ class Item(models.Model):
     """An item is a single instance of a product"""
     item = models.CharField(max_length=20, unique=True)
 
+
+
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
 
@@ -81,7 +84,12 @@ class Item(models.Model):
 
     @property
     def on_loan(self):
-        return False
+        from lending.models import LentItems
+        loans = LentItems.objects.filter(item_id=self.id, return_dt__isnull=True)
+        assert len(loans) <= 1
+        if len(loans):
+            return loans[0].loan.until_dt
+        return None
 
     @property
     def reserved(self):

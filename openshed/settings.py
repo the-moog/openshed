@@ -13,11 +13,14 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 from pathlib import Path
 import hashlib
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-BASE_DIR = Path(__file__)
+BASE_DIR = Path(__file__).parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -28,7 +31,7 @@ SECRET_KEY = hashlib.md5(Path("secretpass").open().read().strip().encode('utf-8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 
 
@@ -154,6 +157,8 @@ STATIC_ROOT = BASE_DIR / '../static'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / '../media'
 
+print(f"MEDIA_ROOT : {MEDIA_ROOT}")
+print(f"STATIC_ROOT: {STATIC_ROOT}")
 
 #Django 3.2 Migration
 #see https://dev.to/rubyflewtoo/upgrading-to-django-3-2-and-fixing-defaultautofield-warnings-518n

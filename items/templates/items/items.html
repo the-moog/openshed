@@ -1,11 +1,14 @@
 {% extends 'openshed/base.html' %}
+{% load form_helpers %}
 
 {% block content %}
+    {% if is_manager %}
   <div class="float-right noprint">
     <a class="btn btn-primary" href="/items/items/add">
       <span class="bi-plus"></span>
       Add
     </a>
+  {% endif %}
   </div>
   <h1>{% block title %}Items{% endblock %}</h1>
   <table class="table">
@@ -13,16 +16,14 @@
       <tr>
         <th scope="col">Item</th>
         <th scope="col">Vendor</th>
-        {% if not loan_view %}
-          <th scope="col">Supplier</th>
-        {% endif %}
+        <th scope="col">Supplier</th>
         <th scope="col">Product</th>
         <th scope="col">Serial</th>
         <th scope="col">Size</th>
-        {% if not loan_view %}
-          <th scope="col">Commissioning</th>
-          <th scope="col">Comment</th>
-        {% endif %}
+        <th scope="col"></th>
+        <th scope="col">Commissioning</th>
+        <th scope="col">Comment</th>
+        <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
@@ -36,32 +37,19 @@
         <td><a href="products/{{ item.product.id }}">{{ item.product.name }}</a></td>
         <td>{{ item.serial }}</td>
         <td>{{ item.size }}</td>
-        <td>{{ item.image }}</td>
-        {% if not loan_view %}
-          <td>{{ item.commissioning_date }}</td>
-          <td>{{ item.comment }}</td>
-          <td>
-            <a class="btn btn-warning" href="items/{{ item.id }}/edit">
-              <span class="bi-pen"></span>
-            </a>
-            <a class="btn btn-danger" href="items/{{ item.id }}/delete">
-              <span class="bi-trash"></span>
-            </a>
-          </td>
-        {% else %}
-          <td>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="deselect_{{ item }} }}" value="not_{{ item }}"
-                     aria-label="">
-            </div>
-          </td>
-          <td>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="checkbox" id="select_{{ item }} }}" value="{{ item }}"
-                     aria-label="">
-            </div>
-          </td>
-        {% endif %}
+        <td>{% render_item_image item.image thumbnail=True %}</td>
+        <td>{{ item.commissioning_date }}</td>
+        <td>{{ item.comment }} {% if item.on_loan != None %} ON LOAN UNTIL {{ item.on_loan }} {% endif %}</td>
+        <td>
+          {% if is_manager %}
+          <a class="btn btn-warning" href="items/{{ item.id }}/edit">
+            <span class="bi-pen"></span>
+          </a>
+          <a class="btn btn-danger" href="items/{{ item.id }}/delete">
+            <span class="bi-trash"></span>
+          </a>
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
     </tbody>

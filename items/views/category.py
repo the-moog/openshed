@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Product, Item, Category
 from items.forms import CategoryForm
+from items.utils import get_user_from_request
 
 
 @login_required
@@ -13,7 +14,8 @@ def categories_listing(request):
     categories = Category.objects.all()
 
     context = {
-        'categories': categories
+        'categories': categories,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/categories.html', context)
@@ -28,7 +30,8 @@ def category_detail(request, id):
     context = {
         'category': category,
         'product_count': product_count,
-        'item_count': item_count
+        'item_count': item_count,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/category.html', context)
@@ -41,9 +44,7 @@ def category_add(request):
 
         if form.is_valid():
             category = Category()
-
             category.name = form.cleaned_data['name']
-
             category.save()
 
             return redirect(f'/items/categories/{category.id}')
@@ -63,9 +64,7 @@ def category_edit(request, id):
 
         if form.is_valid():
             category.name = form.cleaned_data['name']
-
             category.save()
-
             return redirect(f'/items/categories/{category.id}')
 
     else:

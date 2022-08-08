@@ -116,16 +116,13 @@ def loan_reserve(request):
 def loanable_items(request):
     """Return a list of items available for loan including those that are reserved by the user"""
     user = get_user_from_request(request)
-    items = Item.objects.filter(Q(reserved_by__isnull=True) | Q(reserved_by__id=user.id)).select_related('product').order_by('product__category', 'id')
+    items = Item.objects.all()
 
+    # Exclude items already on loan
+    items.exclude(Q(item__in=[i for i in items if i.on_loan]))
 
-    # Include items that are either not reserved at all or reserved by user
-    #items = items.filter(Q(reserved_by__isnull=True) | Q(reserved_by__id=user.id))
-
-    # Exclude items that are already on loan
-    lent_items = LentItems.objects.filter(return_dt__isnull=True).values_list('item')
-    if len(lent_items):
-        items = items.exclude(item__in=lent_items)
+    # Exclude items that are reserved by another user
+    items.exclude(~Q(reserved_by=user))
 
     context = {
         'items': items,

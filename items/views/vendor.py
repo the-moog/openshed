@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Product, Item, Vendor
 from items.forms import VendorForm
+from items.utils import get_user_from_request
 
 
 @login_required
@@ -14,7 +15,8 @@ def vendors_listing(request):
     vendors = Vendor.objects.all()
 
     context = {
-        'vendors': vendors
+        'vendors': vendors,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/vendors.html', context)
@@ -29,7 +31,8 @@ def vendor_detail(request, id):
     context = {
         'vendor': vendor,
         'product_count': product_count,
-        'item_count': item_count
+        'item_count': item_count,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/vendor.html', context)

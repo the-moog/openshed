@@ -24,7 +24,7 @@
     <td>{{ item.serial }}</td>
     <td>{{ item.product.name}} | {{ item.product.description }}</td>
     <td>{{ item.size }}</td>
-    <td>{{ item.image }}</td>
+    <td>{% render_item_image item.image thumbnail=False %}</td>
     </tr>
   {% endfor %}
   </tbody>

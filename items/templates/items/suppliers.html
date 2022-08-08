@@ -1,12 +1,15 @@
 {% extends 'openshed/base.html' %}
+{% load form_helpers %}
 
 {% block content %}
+    {% if is_manager %}
 <div class="float-right noprint">
    <a class="btn btn-primary" href="/items/suppliers/add">
       <span class="bi-plus"></span>
       Add
    </a>
 </div>
+  {% endif %}
 <h1>{% block title %}Suppliers{% endblock %}</h1>
 <table class="table">
   <thead>
@@ -19,12 +22,14 @@
     <tr>
       <td><a href="suppliers/{{supplier.id}}">{{supplier.name}}</a></td>
       <td>
+          {% if is_manager %}
         <a class="btn btn-warning" href="suppliers/{{supplier.id}}/edit">
           <span class="bi-pen"></span>
         </a>
         <a class="btn btn-danger" href="suppliers/{{supplier.id}}/delete">
           <span class="bi-trash"></span>
         </a>
+        {% endif %}
       </td>
     </tr>
 {% endfor %}

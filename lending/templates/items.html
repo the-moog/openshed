@@ -1,4 +1,5 @@
 {% extends 'openshed/base.html' %}
+{% load form_helpers %}
 
 {% block content %}
 {% csrf_token %}
@@ -108,7 +109,7 @@
         <td><a href="products/{{ item.product.id }}"><b>{{ item.product.name }}</b></a></td>
         <td><b>{{ item.serial }}</b></td>
         <td><b>{{ item.size }}</b></td>
-        <td><b>{{ item.image }}</b></td>
+        <td>{% render_item_image item.image thumbnail=True %}</td>
         <td></td>
       </tr>
     {% endfor %}
