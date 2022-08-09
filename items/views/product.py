@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Product, Item
 from items.forms import ProductForm
+from items.utils import get_user_from_request
 
 
 @login_required
@@ -15,7 +16,8 @@ def products_listing(request):
         products = products.filter(vendor=request.GET.get('vendor'))
 
     context = {
-        'products': products
+        'products': products,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/products.html', context)
@@ -28,7 +30,8 @@ def product_detail(request, product_id):
 
     context = {
         'product': product,
-        'item_count': item_count
+        'item_count': item_count,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/product.html', context)

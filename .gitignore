@@ -13,3 +13,6 @@ password.env
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
+static/**
+openshed/jsignature/**
+media/items/**

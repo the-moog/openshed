@@ -2,6 +2,7 @@
 {% load form_helpers %}
 
 {% block form %}
+    {% render_field form.username %}
     {% render_field form.first_name %}
     {% render_field form.last_name %}
     {% render_field form.departure_date %}

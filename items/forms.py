@@ -27,13 +27,14 @@ class CategoryForm(forms.Form):
 
 class ItemForm(forms.Form):
     name = forms.CharField(max_length=20)
-    product = DynamicModelChoiceField(queryset=Product.objects.all(), display_field='name')
+    product = DynamicModelChoiceField(queryset=Product.objects.all(), display_field='long_name')
     supplier = DynamicModelChoiceField(queryset=Supplier.objects.all(), display_field='name')
     serial = forms.CharField(max_length=20, required=False)
     size = forms.CharField(max_length=5, required=False)
     commissioning_date = forms.DateField(initial=datetime.date.today, required=False)
     decommissioning_date = forms.DateField(required=False)
     comment = forms.CharField(max_length=50, required=False)
+    image = forms.ImageField(allow_empty_file=True, required=False)
 
 
 class ProductForm(forms.Form):

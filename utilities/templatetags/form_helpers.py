@@ -5,7 +5,7 @@ register = template.Library()
 
 
 @register.inclusion_tag('utilities/render_field.html')
-def render_field(field, bulk_nullable=False):
+def render_field(field, bulk_nullable=False, css=None):
     """
     Render a single form field from template
     """
@@ -46,3 +46,16 @@ def widget_type(field):
         return field.field.widget.__class__.__name__.lower()
     else:
         return None
+
+
+@register.inclusion_tag('utilities/render_item_image.html')
+def render_item_image(image, thumbnail=True, max_y_size=300):
+    """
+    Render an item image, assuring it's size
+    """
+    if thumbnail:
+        max_y_size = 100
+    return {
+        'image': image,
+        'max_y_size': max_y_size,
+    }

@@ -1,0 +1,127 @@
+{% extends 'openshed/base.html' %}
+{% load form_helpers %}
+
+{% block content %}
+{% csrf_token %}
+  <script type="text/javascript">
+
+  async function reserve(item) {
+    let formData = new FormData();
+    const csrf_token = getCookie('csrftoken');
+    formData.append("csrfmiddlewaretoken", csrf_token);
+    formData.append("reserve_item", item);
+
+    const tryReserve = new Request("/lending/reserve", {
+        method: 'post',
+        headers: {
+          'Cache-Control': 'no-store',
+        },
+        mode: 'same-origin',
+        body: formData});
+    let response = await fetch(tryReserve);
+    if (response.status !== 200) {
+        throw new Error('Something went wrong');
+    }
+  }
+
+  async function update_bag(){
+
+    const request = new Request("/items/items/reserved", {
+        method: 'get',
+        headers: {
+          'Cache-Control': 'no-store',
+        },
+        mode: 'same-origin',
+    });
+    let response = await fetch(request);
+    if (response.status !== 200) {
+        throw new Error('Something went wrong');
+    }
+    let selected_ids = []
+    let unavailable_ids = []
+
+    await response.json().then((data) => {
+        let reserved_items = JSON.parse(data.reserved_items)
+        reserved_items.forEach((item) => {
+          let reserved_by_id = item.fields['reserved_by']
+          let item_id = item['pk']
+          if (reserved_by_id != null) {
+              if (reserved_by_id === {{ user.id }}) selected_ids.push(item_id)
+              else unavailable_ids.push(item_id)
+          }
+        })})
+
+    const table = document.getElementById('item_table');
+    for (let i=1; i<table.rows.length; i++) {
+        let row = table.rows[i]
+        let cell = row.cells[6]
+        let row_item_id = row.attributes.id.value;
+        row_item_id = parseInt(row_item_id.split("_")[1]);
+
+        if (selected_ids.includes(row_item_id)) {
+            row.style.backgroundColor = "lightgreen";
+            cell.innerHTML = "<b>Bagged</b>";
+        } else if (unavailable_ids.includes(row_item_id)) {
+            row.style.backgroundColor = "yellow";
+            cell.innerHTML = "<b>Unavailable</b>";
+        } else {
+            row.style.backgroundColor = "white";
+            cell.innerHTML = "<b>Bag It</b>";
+        }}
+    let bagtxt = ""
+    if (selected_ids.length === 0)bagtxt = "Your Goodie Bag is empty";
+    else if (selected_ids.length === 1)bagtxt = selected_ids.length.toString() + " item in your bag";
+    else bagtxt = selected_ids.length.toString() + " items in your bag";
+    document.getElementById('basket_count').textContent = bagtxt;
+  }
+
+  async function bagIt(row, item) {
+    await reserve(item)
+    await update_bag()
+  }
+
+  </script>
+  <h1>{% block title %}
+    <div class="d-flex justify-content-between"><div>Available Items</div>
+    <div><label id="basket_count"></label></div></div>{% endblock %}</h1>
+  <div class="d-flex justify-content-between">
+  <div><b>Select the items you would like to place in your goodie bag by clicking to toggle their state</b><br>
+  When you are happy with your choices <b>press BORROW</b>.</div>
+  <div><a class="btn-primary btn-lg btn-block" href="/lending/borrow">BORROW</a></div>
+  </div>
+  <table id="item_table" class="table">
+    <thead>
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col">Vendor</th>
+        <th scope="col">Product</th>
+        <th scope="col">Serial</th>
+        <th scope="col">Size</th>
+        <th scope="col"></th>
+        <th scope="col">Goodie Bag</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+      <tr id="rowitem_{{ item.id }}" data-href="#" onclick="window.location='#';bagIt({{ forloop.counter }}, {{ item.id }});">
+        <td><a href="items/{{ item.id }}"><b>{{ item.item }}</b></a></td>
+        <td><a href="vendors/{{ item.product.vendor.id }}"><b>{{ item.product.vendor.name }}</b></a></td>
+        <td><a href="products/{{ item.product.id }}"><b>{{ item.product.name }}</b></a></td>
+        <td><b>{{ item.serial }}</b></td>
+        <td><b>{{ item.size }}</b></td>
+        <td>{% render_item_image item.image thumbnail=True %}</td>
+        <td></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <script type="text/javascript">
+  jQuery(document).ready(function ($) {
+    update_bag();
+    $(window).on('resize', function() {
+      update_bag();
+    });
+  });
+  </script>
+{% endblock %}

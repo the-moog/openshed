@@ -1,6 +1,8 @@
 {% extends 'openshed/base.html' %}
+{% load form_helpers %}
 
 {% block content %}
+  {% if is_manager %}
 <div class="float-right noprint">
    <a class="btn btn-warning" href="{{item.id}}/edit">
       <span class="bi-pen"></span>
@@ -10,10 +12,20 @@
       <span class="bi-trash"></span>
       Delete
    </a>
+   <a class="btn btn-info" href="{{item.id}}/service">
+      <span class="bi-tools"></span>
+      Service
+   </a>
 </div>
-<div class="card" style="width: 18rem;">
+  {%  endif %}
+<div class="card" style="width: 25rem;">
   <div class="card-header">
-    <strong>Item</strong>
+    <strong>Item
+      <div class="float-right noprint">{% if item.on_loan %}(ON LOAN){% else %}
+        {% if not item.reserved %}<a class="btn btn-secondary" href="{{item.id}}/cart_add">
+      <span class="bi-bag-plus"></span>
+      BORROW
+      </a>{% else %}(RESERVED){% endif %}{% endif %}</div></strong>
   </div>
   <table class="table table-hover">
     <tr>
@@ -43,6 +55,13 @@
     <tr>
       <td>Comment</td>
       <td>{{item.comment}}</td>
+    </tr>
+    <tr>
+      <td>Service History</td>
+      <td>No service required</td>
+    </tr>
+    <tr>
+      <td>{% render_item_image item.image thumbnail=False %}</td>
     </tr>
   </table>
 </div>

@@ -5,12 +5,16 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Item
 from items.forms import ItemForm
+from items.utils import get_user_from_request
+from django.http import JsonResponse
+from django.core import serializers
+from items.utils import reserve
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
 
 import logging
 
 logger = logging.getLogger(__name__)
-
-
 
 
 @login_required
@@ -35,10 +39,15 @@ def items_listing(request):
         items = items.filter(decommissioning_date=None)
 
     context = {
-        'items': items
+        'items': items,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
-    return render(request, 'items/items.html', context)
+    #if loan_view:
+    #    page = redirect("/items/items", loan_view=loan_view)
+    #else:
+    page = render(request, 'items/items.html', context)
+    return page
 
 
 @login_required
@@ -46,7 +55,8 @@ def item_detail(request, item_id):
     item = Item.objects.get(pk=item_id)
 
     context = {
-        'item': item
+        'item': item,
+        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/item.html', context)
@@ -56,7 +66,7 @@ def item_detail(request, item_id):
 def item_add(request):
     logger.debug("item_add")
     if request.method == 'POST':
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, request.FILES)
         logger.debug("POST")
         if form.is_valid():
             logger.debug("Adding")
@@ -69,7 +79,11 @@ def item_add(request):
             item.size = form.cleaned_data['size']
             item.commissioning_date = form.cleaned_data['commissioning_date']
             item.comment = form.cleaned_data['comment']
-
+            image = request.FILES['image'].read()
+            img_temp = NamedTemporaryFile(delete=True)
+            img_temp.write(image)
+            img_temp.seek(0)
+            item.image.save(f"image_{item.id}.jpg", File(img_temp), save=True)
             item.save()
 
             return redirect(f'/items/items/{item.id}')
@@ -88,7 +102,7 @@ def item_edit(request, id):
     item = Item.objects.get(pk=id)
 
     if request.method == 'POST':
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, request.FILES)
 
         if form.is_valid():
             item.item = form.cleaned_data['name']
@@ -99,7 +113,11 @@ def item_edit(request, id):
             item.commissioning_date = form.cleaned_data['commissioning_date']
             item.decommissioning_date = form.cleaned_data['decommissioning_date']
             item.comment = form.cleaned_data['comment']
-
+            image = request.FILES['image'].read()
+            img_temp = NamedTemporaryFile(delete=True)
+            img_temp.write(image)
+            img_temp.seek(0)
+            item.image.save(f"image_{item.id}.jpg", File(img_temp), save=True)
             item.save()
 
             return redirect(f'/items/items/{item.id}')
@@ -107,12 +125,13 @@ def item_edit(request, id):
     else:
         form = ItemForm(initial={'name': item.item,
                                  'product': item.product,
-                                 'supplioer': item.supplier,
+                                 'supplier': item.supplier,
                                  'serial': item.serial,
                                  'size': item.size,
                                  'commissioning_date': item.commissioning_date,
                                  'decommissioning_date': item.decommissioning_date,
-                                 'comment': item.comment
+                                 'comment': item.comment,
+                                 'image': item.image
                                  })
 
     return render(request, 'items/item-edit.html', {'form': form, 'obj': item})
@@ -126,4 +145,29 @@ def item_delete(request, id):
         return redirect(f'/items/items')
 
     return render(request, 'items/item-delete.html')
+
+
+@login_required
+def cart_add(request, id):
+    item = Item.objects.get(id=id)
+    reserve(item, get_user_from_request(request), request.session)
+
+
+@login_required
+def get_reserved(request):
+    user = get_user_from_request(request)
+    try:
+        items = Item.objects.filter(reserved_by=user.id)
+    except Item.DoesNotExist:
+        items = []
+
+    for item in items:
+        if item.reserved_session != request.session.session_key:
+            item.reserved_session = request.session.session_key
+            item.save()
+            item.refresh_from_db()
+
+    items_json = serializers.serialize('json', items)
+
+    return JsonResponse({'reserved_count': items.count(), 'reserved_items': items_json})
 

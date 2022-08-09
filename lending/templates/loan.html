@@ -1,0 +1,56 @@
+{% extends 'openshed/base.html' %}
+
+{% block content %}
+  {% if is_manager %}
+<div class="float-right noprint">
+   <a class="btn btn-warning" href="{{member.id}}/edit">
+      <span class="bi-pen"></span>
+      Edit
+   </a>
+   <a class="btn btn-danger" href="{{member.id}}/delete">
+      <span class="bi-trash"></span>
+      Delete
+   </a>
+</div>
+  {% endif %}
+<div class="card" style="width: 50rem;">
+  <div class="card-header">
+    <strong>Loan</strong>
+  </div>
+  <table class="table table-hover">
+    <tr>
+      <td>Lent By</td>
+      <td>{{loan.lent_by.display_name}}</td>
+    </tr>
+    <tr>
+      <td>Lent To</td>
+      <td>{{loan.lent_to.display_name}}</td>
+    </tr>
+    <tr>
+      <td>Lent On</td>
+      <td>{{loan.out_dt}}</td>
+    </tr>
+    <tr>
+      <td>Return By</td>
+      <td>{{loan.out_dt}}</td>
+    </tr>
+    <tr>
+      <td>Items On loan ( Count: {{ item_count }} )</td>
+      <td>
+        <table class="table table-hover">
+          <thead>
+          <th>Item ID</th><th>Description</th><th>Serial Num</th>
+          </thead>
+          {% for item in items %}
+          <tr>
+          <td>{{ item.item.id }}</td>
+          <td>{{ item.item.product.name }}</td>
+          <td>{{ item.item.serial }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+        </td>
+    </tr>
+  </table>
+</div>
+{% endblock %}

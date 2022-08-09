@@ -17,13 +17,15 @@ urlpatterns = [
     path('products/<int:id>/delete', product.product_delete),
 
     # Items
-    path('items', item.items_listing),
+    path('items', item.items_listing, name="index"),
     path('items/<int:item_id>', item.item_detail),
     path('items/add', item.item_add),
     path('items/<int:id>/edit', item.item_edit),
     path('items/<int:id>/delete', item.item_delete),
-    #path('<int:member_id>', views.detail),
-    #path('search/', views.search),
+    path('items/<int:id>/cart_add', item.cart_add, name='cart_add'),
+    path('items/reserved', item.get_reserved),
+    #path('cart/cart_detail/', item.cart_detail, name='cart_detail'),
+
 
     # Vendors
     path('vendors', vendor.vendors_listing),

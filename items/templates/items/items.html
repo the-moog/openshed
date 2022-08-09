@@ -1,48 +1,57 @@
 {% extends 'openshed/base.html' %}
+{% load form_helpers %}
 
 {% block content %}
-<div class="float-right noprint">
-   <a class="btn btn-primary" href="/items/items/add">
+    {% if is_manager %}
+  <div class="float-right noprint">
+    <a class="btn btn-primary" href="/items/items/add">
       <span class="bi-plus"></span>
       Add
-   </a>
-</div>
-<h1>{% block title %}Items{% endblock %}</h1>
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">Item</th>
-      <th scope="col">Vendor</th>
-      <th scope="col">Supplier</th>
-      <th scope="col">Product</th>
-      <th scope="col">Serial</th>
-      <th scope="col">Size</th>
-      <th scope="col">Commissioning</th>
-      <th scope="col">Comment</th>
-      <th scope="col">Attribution</th>
-    </tr>
-  </thead>
-  <tbody>
-{% for item in items %}
-    <tr>
-      <td><a href="items/{{item.id}}">{{item.item}}</a></td>
-      <td><a href="vendors/{{item.product.vendor.id}}">{{item.product.vendor.name}}</a></td>
-      <td><a href="suppliers/{{item.supplier.id}}">{{item.supplier.name}}</a></td>
-      <td><a href="products/{{item.product.id}}">{{item.product.name}}</a></td>
-      <td>{{item.serial}}</td>
-      <td>{{item.size}}</td>
-      <td>{{item.commissioning_date}}</td>
-      <td>{{item.comment}}</td>
-      <td>
-        <a class="btn btn-warning" href="items/{{item.id}}/edit">
-          <span class="bi-pen"></span>
-        </a>
-        <a class="btn btn-danger" href="items/{{item.id}}/delete">
-          <span class="bi-trash"></span>
-        </a>
-      </td>
-    </tr>
-{% endfor %}
-  </tbody>
-</table>
+    </a>
+  {% endif %}
+  </div>
+  <h1>{% block title %}Items{% endblock %}</h1>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Item</th>
+        <th scope="col">Vendor</th>
+        <th scope="col">Supplier</th>
+        <th scope="col">Product</th>
+        <th scope="col">Serial</th>
+        <th scope="col">Size</th>
+        <th scope="col"></th>
+        <th scope="col">Commissioning</th>
+        <th scope="col">Comment</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in items %}
+      <tr>
+        <td><a href="items/{{ item.id }}">{{ item.item }}</a></td>
+        <td><a href="vendors/{{ item.product.vendor.id }}">{{ item.product.vendor.name }}</a></td>
+        {% if not loan_view %}
+          <td><a href="suppliers/{{ item.supplier.id }}">{{ item.supplier.name }}</a></td>
+        {% endif %}
+        <td><a href="products/{{ item.product.id }}">{{ item.product.name }}</a></td>
+        <td>{{ item.serial }}</td>
+        <td>{{ item.size }}</td>
+        <td>{% render_item_image item.image thumbnail=True %}</td>
+        <td>{{ item.commissioning_date }}</td>
+        <td>{{ item.comment }} {% if item.on_loan != None %} ON LOAN UNTIL {{ item.on_loan }} {% endif %}</td>
+        <td>
+          {% if is_manager %}
+          <a class="btn btn-warning" href="items/{{ item.id }}/edit">
+            <span class="bi-pen"></span>
+          </a>
+          <a class="btn btn-danger" href="items/{{ item.id }}/delete">
+            <span class="bi-trash"></span>
+          </a>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}
