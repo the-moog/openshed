@@ -12,6 +12,10 @@
       <span class="bi-trash"></span>
       Delete
    </a>
+   <a class="btn btn-info" href="{{item.id}}/service">
+      <span class="bi-tools"></span>
+      Service
+   </a>
 </div>
   {%  endif %}
 <div class="card" style="width: 25rem;">
@@ -51,6 +55,10 @@
     <tr>
       <td>Comment</td>
       <td>{{item.comment}}</td>
+    </tr>
+    <tr>
+      <td>Service History</td>
+      <td>No service required</td>
     </tr>
     <tr>
       <td>{% render_item_image item.image thumbnail=False %}</td>
