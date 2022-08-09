@@ -1,48 +1,83 @@
-# OpenShed
-OpenShed is a Django application to manage inventory. It has been developed to manage equipments for a association but it should be suitable for small business.
+# FORK - Work in progress
 
-Openshed organizes items per product and category. It keeps trace of who borrows the equipement.
+This is a fork of [openshed](https://github.com/openshed-community/openshed) (new name TBD).  It is very much work in progress, though getting there.
+
+The intention is to create a fully functional application to manage a kit store for a dive club, though it could be used for any similar equipment hire.  It will be hooked into a [Wagtail CMS](https://wagtail.org/) that forms our club website.
+
+This is such a deviation that I don't think it's the same project any longer....
+
+Intended features:
+
+* Streamline and automate initial setup
+* Dropping independent Member model, now based on Django's User model **(DONE)**
+* Working with NFC/QR id tags **(DONE)**
+* Better implementation of equipment loans, using jsignature to sign for receipts and a shopping cart like functionality **(DONE)**
+* Equipment service history **(WIP)**
+* Equipment sets **(PLANNED)**
+* Permission levels
+  * Zero - Just read a tag, for lost items to be returned (WIP)
+  * User - Checkin and checkout items **(DONE)**
+  * Admin - Modify records and crete new items **(DONE)**
+* Equipment reservation **(DONE)**
+* Item images **(DONE)**
+* Billing for item hire **(PLANNED)**
+* eMail notification **(PLANNED)**
+
+***NOTE: In doing the above there are significant differences to the database schema compared to the original project, it is probably not possible to simply upgrade the database.***
+
+# OpenShed
+
+OpenShed is a Django application to manage inventory. It has been developed to manage equipment for a BSAC Dive Club, but it could be used by anybody that has a collection of kit that needs some sort of management.
 
 ## Installation
 
+The following instructions have changed from the original project, still work in progress.
+
 ### Get the source
+
 (assumes your user can create files in /opt)
+
 ```bash
 cd /opt
-git clone https://github.com/BegBlev/openshed
+git clone https://github.com/the-moog/openshed
 ```
 
 ### Create a postgres database
+
+* Install postgres
+* Create the database
+* Create the admin user
+* Set permissions
+
 ```bash
 sudo apt-get install postgresql
-sudo su postgres
-psql
+cd openshed
+make clean
 ```
-```sql
-CREATE DATABASE equipment;
-CREATE USER equipment WITH PASSWORD 'secretpass';
-ALTER ROLE equipment SET client_encoding TO 'utf8';
-ALTER ROLE equipment SET default_transaction_isolation TO 'read committed';
-ALTER ROLE equipment SET timezone TO 'UTC';
-GRANT ALL PRIVILEGES ON DATABASE equipment TO equipment;
 
-\q
-exit
+### Populate with dummy data (optional)
+
+```bash
+make dummy
 ```
 
 ### Sensible settings
+
 Edit <b><i>openshed/settings.py</i></b><br>
 Put a secret key between the quotes
+
 ```python
 SECRET_KEY = 'some secret here'
 ```
 
 Set the permitted host(s)
+
 ```python
 ALLOWED_HOSTS = ['localhost']
 ```
 
 Connect database
+
 ```python
 DATABASES = {
     'default': {
@@ -57,17 +92,20 @@ DATABASES = {
 ```
 
 Set a language and timezone
+
 ```python
 LANGUAGE_CODE = 'en'
 TIME_ZONE = 'Europe/London'
 ```
 
 ### Install dependencies
+
 ```bash
 sudo apt-get install libpq-dev
 ```
 
 ### Use pipenv to prevent dependency hell
+
 ```bash
 sudo pip3 install pipenv
 cd /opt/openshed
@@ -76,6 +114,7 @@ pipenv update
 ```
 
 ### Prepare and run
+
 ```bash
 cd /opt/openshed
 pipenv shell
@@ -83,10 +122,6 @@ pipenv shell
 ./manage.py createsuperuser
 ./manage.py runserver
 ```
-
-
-
-
 
 ## About OpenShed
 
@@ -104,4 +139,5 @@ If you want to know the list of equipment assigned to 1 person just select the m
 ![Screenshot of items list for 1 member](docs/media/member-items.png "Items for 1 member view")
 
 # Thanks
+
 Openshed is largely inspired by [NetBox](https://github.com/netbox-community/netbox). I would like to thank them for the amazing work they have done.
