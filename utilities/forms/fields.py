@@ -1,4 +1,6 @@
 from django import forms
+from phone_field import PhoneField as OldPhoneField
+from phone_field import PhoneNumber
 
 
 class DynamicModelChoiceField(forms.ModelChoiceField):
@@ -13,3 +15,16 @@ class DynamicModelChoiceField(forms.ModelChoiceField):
 
     def label_from_instance(self, obj):
         return getattr(obj, self.display_field)
+
+
+class PhoneField(OldPhoneField):
+    # see GitHub
+    def get_prep_value(self, value):
+        if not value:
+            # return ''
+            return None
+
+        if not isinstance(value, PhoneNumber):
+            value = PhoneNumber(value)
+        return value.cleaned
+
