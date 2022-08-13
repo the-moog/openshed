@@ -32,6 +32,27 @@
       <td>Items</td>
       <td><a href="../items?category={{category.id}}">{{item_count}}</a></td>
     </tr>
+    <tr>
+      <td>Service Schedules
+        <div class="float-right noprint">   <a class="btn btn-secondary" href="add_schedule">
+            <span class="bi-plus"></span></a>
+            </div>
+      </td>
+      <td><table>
+        {% if service_schedules != None %}
+        {% for schedule in service_schedules %}
+          <tr><td>{{ schedule }}</td>
+          <td>
+            <div class="float-right noprint">   <a class="btn btn-secondary" href="delete_schedule">
+            <span class="bi-trash"></span>Delete</a>
+            </div>
+          </td></tr>
+        {% endfor %}
+        {% else %}
+          Scheduled Service Not Required
+        {% endif %}
+      </table></td>
+    </tr>
   </table>
 </div>
     {% if is_manager %}

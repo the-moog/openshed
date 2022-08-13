@@ -6,11 +6,13 @@ from items.models import Item
 from members.models import Member
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
 import json
-from items.utils import reserve, get_user_from_request
+from items.utils import reserve
 from django.db.models import Q
 import datetime
 from items.utils import release_reserved
 from openshed.jsignature.utils import draw_signature
+from django.contrib.auth import get_user
+
 
 import logging
 
@@ -30,7 +32,7 @@ def loans(request):
 
 @login_required
 def loan_complete(request):
-    user = get_user_from_request(request)
+    user = get_user(request)
 
     dt_ok = reason_ok = items_ok = True
 
@@ -96,7 +98,7 @@ def loan_reserve(request):
         item = request.POST['reserve_item']
 
         try:
-            user = get_user_from_request(request)
+            user = get_user(request)
         except Member.DoesNotExist:
             return HttpResponseNotAllowed()
 
@@ -115,7 +117,7 @@ def loan_reserve(request):
 @login_required
 def loanable_items(request):
     """Return a list of items available for loan including those that are reserved by the user"""
-    user = get_user_from_request(request)
+    user = get_user(request)
     items = Item.objects.all()
 
     # Exclude items already on loan
@@ -142,7 +144,7 @@ def loan_detail(request, id):
         'loan': loan,
         'item_count': items.count(),
         'items': items,
-        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
+        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'loan.html', context)
@@ -158,7 +160,7 @@ def loan_confirm(request, lending_id):
         'until_dt': loan.until_dt,
         'reason': loan.reason,
         'lending_id': loan.id,
-        'lender': get_user_from_request(request),
+        'lender': get_user(request),
         'items': [i.item for i in items]
     }
     if request.method == 'POST':
@@ -170,7 +172,7 @@ def loan_confirm(request, lending_id):
             loan.out_dt = datetime.datetime.utcnow()
             signature = form.cleaned_data.get('signature')
             loan.signature = draw_signature(signature, as_file=True)
-            loan.lent_by = get_user_from_request(request)
+            loan.lent_by = get_user(request)
             loan.save()
             logger.info("Form complete")
             return loans(request)

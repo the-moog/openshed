@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Product, Item, Category
 from items.forms import CategoryForm
-from items.utils import get_user_from_request
+from django.contrib.auth import get_user
 
 
 @login_required
@@ -15,7 +15,7 @@ def categories_listing(request):
 
     context = {
         'categories': categories,
-        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
+        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/categories.html', context)
@@ -31,7 +31,8 @@ def category_detail(request, id):
         'category': category,
         'product_count': product_count,
         'item_count': item_count,
-        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
+        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists(),
+        'service_schedules': ["1", "2", "3"]
     }
 
     return render(request, 'items/category.html', context)

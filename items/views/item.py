@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Item
 from items.forms import ItemForm
-from items.utils import get_user_from_request
+from django.contrib.auth import get_user
 from django.http import JsonResponse
 from django.core import serializers
 from items.utils import reserve
@@ -40,7 +40,7 @@ def items_listing(request):
 
     context = {
         'items': items,
-        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
+        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     #if loan_view:
@@ -56,7 +56,7 @@ def item_detail(request, item_id):
 
     context = {
         'item': item,
-        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
+        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/item.html', context)
@@ -150,12 +150,12 @@ def item_delete(request, id):
 @login_required
 def cart_add(request, id):
     item = Item.objects.get(id=id)
-    reserve(item, get_user_from_request(request), request.session)
+    reserve(item, get_user(request), request.session)
 
 
 @login_required
 def get_reserved(request):
-    user = get_user_from_request(request)
+    user = get_user(request)
     try:
         items = Item.objects.filter(reserved_by=user.id)
     except Item.DoesNotExist:

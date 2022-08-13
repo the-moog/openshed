@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from items.models import Supplier
 from items.forms import SupplierForm
-from items.utils import get_user_from_request
+from django.contrib.auth import get_user
 
 @login_required
 def supplier_listing(request):
@@ -14,7 +14,7 @@ def supplier_listing(request):
 
     context = {
         'suppliers': suppliers,
-        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
+        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
     return render(request, 'items/suppliers.html', context)
@@ -28,7 +28,7 @@ def supplier_detail(request, id):
 
     context = {
         'supplier': supplier,
-        'is_manager': get_user_from_request(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
+        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
         # 'type_count': product_count,
         # 'item_count': item_count
     }
