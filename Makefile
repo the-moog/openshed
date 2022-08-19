@@ -10,7 +10,10 @@ PSQL := /usr/bin/psql
 PG := $(PASS) $(PSQL) -h localhost -p 5432 -U postgres
 
 .PHONY: all
-all: db
+all: static
+
+.PHONY: database
+database: base_db
 	$(MM) items
 	$(MM) members
 	$(MM) lending
@@ -21,10 +24,20 @@ all: db
 	@echo "Creating dummy data...."
 	$(MP) shell -c 'exec(open("utilities/populate_dummy_data.py").read())'
 	@echo "...completed"
+
+.PHONY: credentials
+credentials: database
+	./djangoadmin.exp
+	@echo "Creating dummy data...."
+	$(MP) shell -c 'exec(open("utilities/populate_dummy_data.py").read())'
+	@echo "...completed"
+
+.PHONY: static
+static: database
 	$(MP) collectstatic
 
-.PHONY: db
-db:	clean
+.PHONY: base_db
+base_db: clean
 	$(PG) -c 'create database equipment;'
 	$(PG) -c 'GRANT ALL PRIVILEGES ON DATABASE equipment TO equipment;'
 

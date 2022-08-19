@@ -16,3 +16,5 @@ password.env
 static/**
 openshed/jsignature/**
 media/items/**
+temp_media/**
+
