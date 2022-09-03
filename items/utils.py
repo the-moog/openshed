@@ -1,6 +1,4 @@
 import datetime
-from members.models import Member
-
 
 
 def release_reserved(item):

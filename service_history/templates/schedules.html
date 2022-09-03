@@ -4,35 +4,35 @@
 {% block content %}
     {% if is_manager %}
 <div class="float-right noprint">
-   <a class="btn btn-primary" href="/items/products/add">
+   <a class="btn btn-primary" href="schedule/add">
       <span class="bi-plus"></span>
       Add
    </a>
 </div>
   {% endif %}
-<h1>{% block title %}Products{% endblock %}</h1>
+<h1>{% block title %}Service Schedules{% endblock %}</h1>
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">Category</th>
-      <th scope="col">Vendor</th>
-      <th scope="col">Name</th>
-      <th scope="col">Description</th>
+      <th scope="col">Id</th>
+      <th scope="col">Schedule</th>
+      <th scope="col">Comment</th>
+      <th scope="col">Applies to Category</th>
     </tr>
   </thead>
   <tbody>
-{% for product in products %}
+{% for schedule in schedules %}
     <tr>
-      <td><a href="categories/{{product.category.id}}">{{product.category.name}}</a></td>
-      <td><a href="vendors/{{product.vendor.id}}">{{product.vendor.name}}</a></td>
-      <td><a href="products/{{product.id}}">{{product.name}}</a></td>
-      <td>{{product.description}}</td>
+      <td><a href="schedules/{{schedule.id}}">{{schedule.id}}</a></td>
+      <td>{{schedule.interval}}</td>
+      <td>{{schedule.comment}}</td>
+      <td>{{schedule.category}}</td>
       <td>
         {% if is_manager %}
-        <a class="btn btn-warning" href="products/{{product.id}}/edit">
+        <a class="btn btn-warning" href="schedules/{{schedule.id}}/edit">
           <span class="bi-pen"></span>
         </a>
-        <a class="btn btn-danger" href="products/{{product.id}}/delete">
+        <a class="btn btn-danger" href="schedules/{{schedule.id}}/delete">
           <span class="bi-trash"></span>
         </a>
         {% endif %}

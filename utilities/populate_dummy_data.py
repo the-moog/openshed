@@ -8,6 +8,7 @@ from items.models import Item
 from lending.models import Lending
 from django.contrib.auth.models import Group, Permission
 from members.models import Member
+from schedule.models import Calendar
 from django.contrib.contenttypes.models import ContentType
 import random
 from urllib.request import urlopen
@@ -42,35 +43,48 @@ joe_blogs.username = "joe"
 joe_blogs.save()
 
 USE_URLLIB = True
-NUM_CATEGORIES = 10
-NUM_VENDORS = 10
-NUM_SUPPLIERS = 20
-NUM_PRODUCTS = 50
-NUM_ITEMS = 200
+NUM_CATEGORIES = 5
+NUM_VENDORS = 5
+NUM_SUPPLIERS = 5
+NUM_PRODUCTS = 5
+NUM_ITEMS = 20
 
 for category in range(1, NUM_CATEGORIES+1):
-    c = Category(name=category)
+    c = Category(name=f"Category {category}")
     c.save()
 
 for vendor in range(1, NUM_VENDORS+1):
-    v = Vendor(name=f"Vendor {vendor}")
+    vn = f"Vendor {vendor}"
+    v = Vendor(name=vn)
+    print(f"Adding {vn}")
     v.save()
 
 for supplier in range(1, NUM_SUPPLIERS+1):
-    s = Supplier(name=f"Supplier {supplier}", contact=f"Contact {supplier}")
+    sn = f"Supplier {supplier}"
+    s = Supplier(name=sn, contact=f"Contact {supplier}")
+    print(f"Adding {sn}")
     s.save()
 
 for product in range(1, NUM_PRODUCTS+1):
     vendor = Vendor.objects.get(id=random.randint(1, NUM_VENDORS))
     category = Category.objects.get(id=random.randint(1, NUM_CATEGORIES))
-    p = Product(vendor=vendor, category=category, name=f"Product {product}", description=f"A long description of the product with the name {product}")
+
+    pn = f"Product {product}"
+    p = Product(vendor=vendor, category=category, name=pn, description=f"A long description of the product with the name {product}")
+    print(f"Adding {pn}")
     p.save()
 
 images = set(glob.glob("temp_media/image*.jpg"))
 for item in range(1, NUM_ITEMS+1):
     supplier = Supplier.objects.get(id=random.randint(1, NUM_SUPPLIERS))
     product = Product.objects.get(id=random.randint(1, NUM_PRODUCTS))
-    i = Item(item=f"Item {item}", product=product, supplier=supplier, serial=str(item)*4, size=str(item*10))
+    # Every item has a calendar to store it's history
+    # - Service events
+    # - Lendings
+    # - Service schedules
+    calendar = Calendar(name=f"Item {item} calendar", slug=f"item-{item}-calendar")
+    calendar.save()
+    i = Item(item=f"Item {item}", product=product, supplier=supplier, calendar=calendar, serial=str(item)*4, size=str(item*10))
     img_temp = NamedTemporaryFile(delete=True)
     if USE_URLLIB:
         try:
@@ -87,7 +101,9 @@ for item in range(1, NUM_ITEMS+1):
         print(f"Using {fp}")
         img_temp = fp.open("rb")
     img_temp.seek(0)
-    i.image.save(f"image_{item}.jpg", File(img_temp), save=True)
+    fn = f"image_{item}.jpg"
+    i.image.save(fn, File(img_temp), save=True)
+    print(f"Creating item {item} with image {fn}")
     i.save()
 
 

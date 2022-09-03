@@ -2,8 +2,11 @@
 {% load form_helpers %}
 
 {% block form %}
-    {% render_field form.category %}
-    {% render_field form.vendor %}
-    {% render_field form.name %}
-    {% render_field form.description %}
+  {% render_field form.interval_type %}
+  {% render_field form.interval %}
+  {% render_field form.category %}
+  {% render_field form.comment %}
+  <br>
+  <i>(Other *) Use one or more of &lt;N&gt;[d|w|m|y] where N is a number<br>
+    &nbsp;&nbsp;e.g. <b>"1y 1m 1d"</b> is one year + one month + one day</i>
 {% endblock %}

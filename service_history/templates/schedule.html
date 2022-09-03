@@ -4,11 +4,11 @@
 {% block content %}
     {% if is_manager %}
 <div class="float-right noprint">
-   <a class="btn btn-warning" href="{{product.id}}/edit">
+   <a class="btn btn-warning" href="{{schedule.id}}/edit">
       <span class="bi-pen"></span>
       Edit
    </a>
-   <a class="btn btn-danger" href="{{product.id}}/delete">
+   <a class="btn btn-danger" href="{{schedule.id}}/delete">
       <span class="bi-trash"></span>
       Delete
    </a>
@@ -16,28 +16,16 @@
   {% endif %}
 <div class="card" style="width: 18rem;">
   <div class="card-header">
-    <strong>Product</strong>
+    <strong>Schedule</strong>
   </div>
   <table class="table table-hover">
     <tr>
-      <td>Category</td>
+      <td>Applies to items in Category</td>
       <td><a href="../categories/{{product.category.id}}">{{product.category.name}}</a></td>
     </tr>
     <tr>
-      <td>Vendor</td>
-      <td><a href="../vendors/{{product.vendor.id}}">{{product.vendor.name}}</a></td>
-    </tr>
-    <tr>
-      <td>Name</td>
-      <td>{{product.name}}</td>
-    </tr>
-    <tr>
-      <td>Description</td>
+      <td>Description of schedule</td>
       <td>{{product.description}}</td>
-    </tr>
-    <tr>
-      <td>Items</td>
-      <td><a href="../items?product={{product.pk}}">{{product_count}}</a></td>
     </tr>
   </table>
 </div>

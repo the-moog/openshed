@@ -24,7 +24,7 @@ class Item(models.Model):
     decommissioning_date = models.DateField(null=True)
     comment = models.CharField(max_length=50, blank=True, default='')
     image = models.ImageField(storage=itemfs, blank=True)
-
+    calendar = models.OneToOneField('schedule.Calendar', on_delete=models.PROTECT)
     reserved_until = models.DateTimeField(null=True)
     reserved_by = models.ForeignKey(Member, null=True, on_delete=models.PROTECT)
     reserved_session = models.CharField(max_length=32, blank=True, default='')

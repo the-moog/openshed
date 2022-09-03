@@ -29,6 +29,7 @@ urlpatterns = [
     path('members/', include('members.urls')),
     path('items/', include('items.urls')),
     path('lending/', include('lending.urls')),
+    path('service/', include('service_history.urls')),
     path('admin/', admin.site.urls),
     re_path(r'^favicon\.ico$', favicon_view),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

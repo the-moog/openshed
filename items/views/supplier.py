@@ -8,6 +8,7 @@ from items.models import Supplier
 from items.forms import SupplierForm
 from django.contrib.auth import get_user
 
+
 @login_required
 def supplier_listing(request):
     suppliers = Supplier.objects.all()

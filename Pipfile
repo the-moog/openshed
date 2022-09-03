@@ -11,12 +11,13 @@ psycopg2 = "*"
 django-phone-field = "*"
 django-address = "*"
 ordered-set = "*"
-django-cart = { git = "https://github.com/bmentges/django-cart"}
+#django-cart = { git = "https://github.com/bmentges/django-cart"}
 pillow = "*"
 django-extensions = "*"
 django-jsignature = "*"
+django-scheduler = { git = "https://github.com/llazzaro/django-scheduler" }
 
 [dev-packages]
 
 [requires]
-python_version = "3.10"
+python_version = "3.9"

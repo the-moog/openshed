@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'phone_field',
     'cart',
     'openshed.jsignature',
+    'schedule'
 ]
 
 CART_SESSION_ID = 'cart'
