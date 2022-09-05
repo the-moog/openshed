@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from service_history.models import ServiceHistory, ServiceSchedule
+from service_history.models import ServiceSchedule, RRule
 from service_history.forms import ServiceScheduleForm
 from django.contrib.auth import get_user
 from items.models.item import Item
-import re
-from schedule.models import Rule as RRule
 from dateutil import rrule
+from schedule.models import freqs
 
 
 @login_required
@@ -42,6 +41,7 @@ rrule_types = {
     'd': rrule.DAILY
 }
 
+
 @login_required
 def schedule_add(request):
     if request.method == 'POST':
@@ -53,27 +53,15 @@ def schedule_add(request):
             interval_type = form.cleaned_data['interval_type']
             interval = form.cleaned_data['interval']
 
-            # ret = {u: None for u in 'dwmy'}
-            # if interval_type == 'o':
-            #     for unit in 'dwmy':
-            #         if unit in interval:
-            #             res = re.search(f"(\[0-9]+){unit}", interval)
-            #             if not res:
-            #                 raise ValueError("How to handle this?")
-            #             ret[unit] = res.groups[0][1]
-            # else:
-            #     ret[interval_type] = int(interval)
-
             category = form.cleaned_data['category']
-            rules = RRule.objects.filter(serviceschedule__category=category).count()
-            rule = RRule(name=f"Category-{category}-{rules+1}", description=form.cleaned_data['comment'],
-                         frequency=rrule_types[interval_type], params=f"interval:{interval}")
-            rule.save()
-
-            schedule.interval = rule
+            rule_count = RRule.objects.filter(serviceschedule__category=category).count()
+            rule = RRule(name=f"{category}-{rule_count+1}", description=form.cleaned_data['comment'],
+                         frequency=freqs[rrule_types[interval_type]][0], params=f"interval:{interval}")
+            rule = rule.save()
+            schedule.rule = rule
             schedule.category = form.cleaned_data['category']
 
-            schedule.save()
+            schedule.save()  # Saving the schedule implicitly updates schedule events
 
             return schedule_listing(request)
 

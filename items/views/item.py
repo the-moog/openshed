@@ -11,7 +11,7 @@ from django.core import serializers
 from items.utils import reserve
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
-
+from service_history.models import ServiceSchedule, ServiceHistory
 import logging
 
 logger = logging.getLogger(__name__)
@@ -43,9 +43,6 @@ def items_listing(request):
         'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
     }
 
-    #if loan_view:
-    #    page = redirect("/items/items", loan_view=loan_view)
-    #else:
     page = render(request, 'items/items.html', context)
     return page
 
@@ -56,7 +53,7 @@ def item_detail(request, item_id):
 
     context = {
         'item': item,
-        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists()
+        'is_manager': get_user(request).groups.filter(name__in=['EquipmentManager', "Admin"]).exists(),
     }
 
     return render(request, 'items/item.html', context)

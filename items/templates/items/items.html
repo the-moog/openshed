@@ -39,7 +39,10 @@
         <td>{{ item.size }}</td>
         <td>{% render_item_image item.image thumbnail=True %}</td>
         <td>{{ item.commissioning_date }}</td>
-        <td>{{ item.comment }} {% if item.on_loan != None %} ON LOAN UNTIL {{ item.on_loan }} {% endif %}</td>
+        <td>{{ item.comment }}
+          {% if item.on_loan != None %}<br>ON LOAN UNTIL {{ item.on_loan }}{% endif %}
+          {% if not item.is_in_service %}<br>OUT OF SERVICE{% endif %}
+        </td>
         <td>
           {% if is_manager %}
           <a class="btn btn-warning" href="items/{{ item.id }}/edit">

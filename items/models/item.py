@@ -5,6 +5,8 @@ from members.models import Member
 from utilities.base_x import IntBaseX
 from items.utils import release_reserved
 import datetime
+from service_history.models import ServiceSchedule, ServiceHistory
+from schedule.models.events import EventRelation
 
 
 itemfs = FileSystemStorage(location='media/items')
@@ -28,6 +30,7 @@ class Item(models.Model):
     reserved_until = models.DateTimeField(null=True)
     reserved_by = models.ForeignKey(Member, null=True, on_delete=models.PROTECT)
     reserved_session = models.CharField(max_length=32, blank=True, default='')
+    is_serviceable = models.BooleanField(default=True)  # Item is not broken in some way
 
     @property
     def uid(self):
@@ -53,5 +56,54 @@ class Item(models.Model):
         return still_reserved
 
     @property
+    def service_applicable(self):
+        # The item is of a type that requires service
+        return ServiceSchedule.objects.filter(category=self.product.category).count() > 0
+
+    @property
     def last_service(self):
-        return datetime.datetime.utcnow()
+        # Get the date of last service if one exists else return None
+        service_events = EventRelation.objects.get_events_for_object(self, 'Service')
+        if not len(service_events):
+            return None
+        if service_events[-1].event.end is None:
+            return service_events[-2].event.end
+        return service_events[-1].event.end
+
+    @property
+    def next_service(self):
+        # Get the date of next service.
+        #
+        # If item out for service return date sent out
+        # If no service required return None
+        # If the item requires service:
+        #   If there is no previous service return today
+        #   If there is a previous service get the schedule(s):
+        #     If the most recent schedule has passed return today
+        #     else return the soonest schedule date
+        if not self.service_applicable:
+            return None
+
+        service_schedule = EventRelation.objects.get_events_for_object(self, 'Service Schedule')
+        if self.out_for_service:
+            service_schedule[-1].start
+
+        if self.last_service is None:
+            return datetime.datetime.today()
+        else:
+            # Note categories may have more than once service schedule
+            # we only need the soonest one
+            return service_schedule[0].start
+
+    @property
+    def out_for_service(self):
+        # Return True if item is out for service
+        service_events = EventRelation.objects.get_events_for_object(self, 'Service')
+        if not len(service_events):
+            return False
+        return service_events[-1].event.end is None
+
+    @property
+    def is_in_service(self):
+        # Return True if item is not out for service and is serviceable
+        return not self.out_for_service and datetime.datetime.utcnow() > self.next_service and self.is_serviceable

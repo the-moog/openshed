@@ -18,10 +18,18 @@
   <div class="card-header">
     <strong>Item
       <div class="float-right noprint">{% if item.on_loan %}(ON LOAN){% else %}
-        {% if not item.reserved %}<a class="btn btn-secondary" href="{{item.id}}/cart_add">
+        {% if not item.reserved %}<a class="btn btn-secondary {% if not item.is_in_service %}disabled{% endif %}" href="{{item.id}}/cart_add">
       <span class="bi-bag-plus"></span>
       BORROW
-      </a>{% else %}(RESERVED){% endif %}{% endif %}</div></strong>
+      </a>{% else %}(RESERVED){% endif %}{% endif %}</div>
+    </strong>
+    {% if item.service_applicable and is_manager %}
+       <div class="float-right noprint">
+        <a class="btn btn-secondary" href="{{item.id}}/cart_add">
+      <span class="bi-wrench"></span>
+      SERVICE
+        </a></div>
+    {% endif %}
   </div>
   <table class="table table-hover">
     <tr>
@@ -50,8 +58,21 @@
     </tr>
     <tr>
       <td>Comment</td>
-      <td>{{item.comment}}</td>
+      <td>{{item.comment}}
+        {% if item.on_loan != None %}<br>ON LOAN UNTIL {{ item.on_loan }}{% endif %}
+        {% if not item.is_in_service %}<br>OUT OF SERVICE{% endif %}
+      </td>
     </tr>
+    {% if item.service_applicable %}
+      <tr>
+        <td>Last Service</td>
+        <td>{{item.last_service|date:"jS M Y"}}</td>
+      </tr>
+      <tr>
+        <td>Next Service</td>
+        <td>{{item.next_service|date:"jS M Y"}}</td>
+      </tr>
+    {% endif %}
     <tr>
       <td>{% render_item_image item.image thumbnail=False %}</td>
     </tr>
